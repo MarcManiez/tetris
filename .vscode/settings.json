@@ -1,9 +1,11 @@
 {
   "cSpell.words": [
     "ebiten",
-    "ebitenutil"
+    "ebitenutil",
+    "tetris"
   ],
   "cSpell.ignoreWords": [
-    "Fullscreen"
+    "Fullscreen",
+    "hajimehoshi"
   ]
 }
