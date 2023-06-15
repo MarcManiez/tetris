@@ -24,6 +24,14 @@ type square [5]*rectangle
 // shape is a collection of squares representing a single tetris piece
 type shape []*square
 
+func (s *shape) move() {
+	for _, sqr := range *s {
+		for _, rect := range *sqr {
+			rect.y += 48
+		}
+	}
+}
+
 func MakeRectangle(size coords, clr color.Color, position coords) *rectangle {
 	img := ebiten.NewImage(size.x, size.y)
 	img.Fill(clr)
