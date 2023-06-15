@@ -39,12 +39,11 @@ func MakeRectangle(size coords, clr color.Color, position coords) *rectangle {
 }
 
 func MakeSquare(clr color.Color, position coords) *square {
-	border := color.RGBA{171, 166, 166, 0xff}
 	arr := square{}
-	arr[0] = MakeRectangle(coords{46, 2}, border, coords{position.x, position.y})
-	arr[1] = MakeRectangle(coords{46, 2}, border, coords{position.x + 2, position.y + 46})
-	arr[2] = MakeRectangle(coords{2, 46}, border, coords{position.x + 46, position.y})
-	arr[3] = MakeRectangle(coords{2, 46}, border, coords{position.x, position.y + 2})
+	arr[0] = MakeRectangle(coords{46, 2}, color.RGBA{184, 184, 184, 0xff}, coords{position.x, position.y})
+	arr[1] = MakeRectangle(coords{46, 2}, color.RGBA{136, 136, 136, 0xff}, coords{position.x + 2, position.y + 46})
+	arr[2] = MakeRectangle(coords{2, 46}, color.RGBA{200, 200, 200, 0xff}, coords{position.x + 46, position.y})
+	arr[3] = MakeRectangle(coords{2, 46}, color.RGBA{150, 150, 150, 0xff}, coords{position.x, position.y + 2})
 	arr[4] = MakeRectangle(coords{44, 44}, clr, coords{position.x + 2, position.y + 2})
 	return &arr
 }
