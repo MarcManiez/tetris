@@ -126,3 +126,5 @@ func makeZ(position coords) *shape {
 	shp = append(shp, MakeSquare(clr, position))
 	return &shp
 }
+
+var shapeFuncs = [7](func(coords) *shape){makeI, makeJ, makeL, makeO, makeS, makeT, makeZ}
