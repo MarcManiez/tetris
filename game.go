@@ -15,7 +15,6 @@ type Game struct {
 	updates                int
 	interval               int
 	updates_since_movement int
-	container              coords
 	shapes                 shapes
 }
 
@@ -35,6 +34,10 @@ func (g *Game) Update() error {
 	if g.updates_since_movement >= g.interval {
 		g.updates_since_movement = 0
 		g.shape.move()
+		if g.ShapeHasBottomContact() {
+			g.TransferShapeToSquares()
+			g.spawnShape()
+		}
 	}
 	return nil
 }
@@ -88,8 +91,7 @@ func (g *Game) spawnShape() {
 func initGame() *Game {
 	frame_clr := color.RGBA{184, 184, 184, 0xff}
 	g := Game{
-		interval:  60,
-		container: coords{x: 10 * 48, y: 20 * 48},
+		interval: 6,
 		frame: [4]*rectangle{
 			makeRectangle(coords{482, 2}, frame_clr, coords{0, 0}),
 			makeRectangle(coords{2, 962}, frame_clr, coords{482, 0}),
@@ -110,5 +112,28 @@ func DrawRectangle(screen *ebiten.Image, rect *rectangle) {
 func (g *Game) DrawGameFrame(screen *ebiten.Image) {
 	for _, rect := range g.frame {
 		DrawRectangle(screen, rect)
+	}
+}
+
+func (g *Game) ShapeHasBottomContact() bool {
+	// Find lowest y value of shape
+	lowestShapeY := g.shape.getLowestY()
+	// See if bottom frame is directly below lowest y value
+	if lowestShapeY == g.frame[2].y {
+		return true
+	}
+	// Search squares to see if any are directly below lowest y value
+	for _, sqr := range g.squares {
+		top := sqr[0]
+		if top.y == lowestShapeY {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *Game) TransferShapeToSquares() {
+	for _, sqr := range *g.shape {
+		g.squares = append(g.squares, sqr)
 	}
 }
