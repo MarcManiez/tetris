@@ -40,11 +40,17 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	DrawGameFrame(screen)
+	// Draw shape
 	for _, sqr := range *g.shape {
 		for _, rect := range *sqr {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(rect.x), float64(rect.y))
-			screen.DrawImage(rect.img, op)
+			DrawRectangle(screen, rect)
+		}
+	}
+	// Draw other squares
+	for _, sqr := range g.squares {
+		for _, rect := range *sqr {
+			DrawRectangle(screen, rect)
 		}
 	}
 	// ebitenutil.DebugPrint(screen, "Hello, World!")
@@ -87,4 +93,23 @@ func initGame() *Game {
 	}
 	g.spawnShape()
 	return &g
+}
+
+func DrawRectangle(screen *ebiten.Image, rect *rectangle) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(rect.x), float64(rect.y))
+	screen.DrawImage(rect.img, op)
+}
+
+func DrawGameFrame(screen *ebiten.Image) {
+	clr := color.RGBA{184, 184, 184, 0xff}
+	sides := []*rectangle{
+		makeRectangle(coords{482, 2}, clr, coords{0, 0}),
+		makeRectangle(coords{2, 962}, clr, coords{482, 0}),
+		makeRectangle(coords{462, 2}, clr, coords{2, 962}),
+		makeRectangle(coords{2, 962}, clr, coords{0, 2}),
+	}
+	for _, rect := range sides {
+		DrawRectangle(screen, rect)
+	}
 }
