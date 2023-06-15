@@ -87,8 +87,8 @@ func makeL(position coords) *shape {
 func makeO(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{255, 255, 0, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y + 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y + 48}))
+	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
+	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y - 48}))
 	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y}))
 	shp = append(shp, MakeSquare(clr, position))
 	return &shp
