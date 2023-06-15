@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 	"math/rand"
 
@@ -82,8 +81,7 @@ func (g *Game) MoveDown() {
 
 func (g *Game) spawnShape() {
 	index := rand.Intn(7)
-	fmt.Println(index)
-	g.shape = shapeFuncs[index](coords{x: 5 * 48, y: 4 * 48})
+	g.shape = shapeFuncs[index](coords{x: 5 * 48, y: -48 + 2})
 }
 
 func initGame() *Game {
