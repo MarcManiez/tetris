@@ -57,7 +57,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return outsideWidth, outsideHeight
+	return 800, 1200
 }
 
 func (g *Game) Rotate() {
@@ -106,7 +106,7 @@ func DrawGameFrame(screen *ebiten.Image) {
 	sides := []*rectangle{
 		makeRectangle(coords{482, 2}, clr, coords{0, 0}),
 		makeRectangle(coords{2, 962}, clr, coords{482, 0}),
-		makeRectangle(coords{462, 2}, clr, coords{2, 962}),
+		makeRectangle(coords{482, 2}, clr, coords{2, 962}),
 		makeRectangle(coords{2, 962}, clr, coords{0, 2}),
 	}
 	for _, rect := range sides {
