@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -13,9 +12,7 @@ const FRAME_WIDTH = 2
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
 	shape *shape
-	board Board
-	// TODO: move this to the board struct
-	frame [4]*rectangle
+	board *Board
 	// Last update call for which a movement key was pressed
 	lastMove int
 	// Throttle value for player movement
@@ -28,16 +25,10 @@ type Game struct {
 }
 
 func initGame() *Game {
-	frame_clr := color.RGBA{184, 184, 184, 0xff}
 	g := Game{
 		interval: 6,
 		throttle: 20,
-		frame: [4]*rectangle{
-			makeRectangle(coords{482, FRAME_WIDTH}, frame_clr, coords{0, 0}),
-			makeRectangle(coords{FRAME_WIDTH, 962}, frame_clr, coords{482, 0}),
-			makeRectangle(coords{482, FRAME_WIDTH}, frame_clr, coords{FRAME_WIDTH, 962}),
-			makeRectangle(coords{FRAME_WIDTH, 962}, frame_clr, coords{0, FRAME_WIDTH}),
-		},
+		board:    makeBoard(),
 	}
 	g.spawnShape()
 	return &g
@@ -59,7 +50,6 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.DrawGameFrame(screen)
 	g.shape.Draw(screen)
 	g.board.Draw(screen)
 	// ebitenutil.DebugPrint(screen, "Hello, World!")
@@ -93,12 +83,6 @@ func (g *Game) MoveDown() {
 func (g *Game) spawnShape() {
 	// index := rand.Intn(7)
 	g.shape = shapeFuncs[6](coords{x: 5, y: -1})
-}
-
-func (g *Game) DrawGameFrame(screen *ebiten.Image) {
-	for _, rect := range g.frame {
-		rect.DrawRectangle(screen)
-	}
 }
 
 func (g *Game) ShapeHasBottomContact() bool {
