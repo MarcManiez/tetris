@@ -11,15 +11,18 @@ import (
 
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
-	shape                  *shape
-	squares                []*square
-	frame                  [4]*rectangle
-	lastMove               int
-	throttle               int
-	updates                int
+	shape   *shape
+	squares []*square
+	frame   [4]*rectangle
+	// Last update call for which a movement key was pressed
+	lastMove int
+	// Throttle value for player movement
+	throttle int
+	// Number of times the update function has run
+	updates int
+	// Number of updates between shape movements
 	interval               int
 	updates_since_movement int
-	shapes                 shapes
 }
 
 func initGame() *Game {
