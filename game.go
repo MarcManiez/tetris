@@ -124,6 +124,7 @@ func (g *Game) ShapeHasBottomContact() bool {
 	// Search squares to see if any are directly below lowest y value
 	for _, sqr := range g.squares {
 		top := sqr[0]
+		// TODO: there's a bug here: the shape stops even when there's a gap, because it uses the top-most square on the entire game surface. Instead, it should collect all the bottom squares of the shape and see if any of them are touching the top of any of the squares in the squares collection
 		if top.y == lowestShapeY {
 			return true
 		}
