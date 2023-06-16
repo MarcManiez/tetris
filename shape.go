@@ -22,3 +22,27 @@ func (s *shape) getBottomSquares() []*square {
 		})
 	})
 }
+
+// getLeftSquares returns the squares that are at the left of the shape
+func (s *shape) getLeftSquares() []*square {
+	return filter(*s, func(sqr *square) bool {
+		return !some(*s, func(sqr2 *square) bool {
+			if sqr == sqr2 {
+				return false
+			}
+			return sqr2.position.x == sqr.position.x-1 && sqr2.position.y == sqr.position.y
+		})
+	})
+}
+
+// getRightSquares returns the squares that are at the right of the shape
+func (s *shape) getRightSquares() []*square {
+	return filter(*s, func(sqr *square) bool {
+		return !some(*s, func(sqr2 *square) bool {
+			if sqr == sqr2 {
+				return false
+			}
+			return sqr2.position.x == sqr.position.x+1 && sqr2.position.y == sqr.position.y
+		})
+	})
+}

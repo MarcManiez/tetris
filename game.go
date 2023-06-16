@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -27,7 +26,7 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval: 30,
+		interval: 10,
 		throttle: 10,
 		board:    makeBoard(),
 	}
@@ -39,10 +38,11 @@ func (g *Game) Update() error {
 	g.updates++
 	g.updates_since_movement++
 	g.HandleInput()
+	g.ClearFullLines()
 	if g.updates_since_movement >= g.interval {
 		g.updates_since_movement = 0
 		g.MoveDown()
-		if g.ShapeHasBottomContact() {
+		if !g.CanMoveDown() {
 			g.TransferShapeToSquares()
 			g.spawnShape()
 		}
@@ -65,21 +65,57 @@ func (g *Game) spawnShape() {
 	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
 }
 
-func (g *Game) ShapeHasBottomContact() bool {
+func (g *Game) CanMoveDown() bool {
 	// Select lowest squares from a shape
 	bottomSquares := g.shape.getBottomSquares()
 	lowestY := bottomSquares[0].position.y
 	if lowestY == (len(g.board.squares) - 1 - HIDDEN_AREA) {
-		return true
+		return false
 	}
 
 	// If every bottom square in the shape has a square directly below it, return true
 	if some(bottomSquares, func(s *square) bool {
 		return g.board.squares[s.position.y+1+HIDDEN_AREA][s.position.x] != nil
 	}) {
-		return true
+		return false
 	}
-	return false
+	return true
+}
+
+// CanMoveLeft returns true if the shape can move left
+func (g *Game) CanMoveLeft() bool {
+	// Select leftmost squares from a shape
+	leftSquares := g.shape.getLeftSquares()
+	if some(leftSquares, func(s *square) bool {
+		return s.position.x == 0
+	}) {
+		return false
+	}
+	// If any left square in the shape has a square directly to its left, return true
+	if some(leftSquares, func(s *square) bool {
+		return g.board.squares[s.position.y+HIDDEN_AREA][s.position.x-1] != nil
+	}) {
+		return false
+	}
+	return true
+}
+
+// CanMoveRight returns true if the shape can move right
+func (g *Game) CanMoveRight() bool {
+	// Select rightmost squares from a shape
+	rightSquares := g.shape.getRightSquares()
+	if some(rightSquares, func(s *square) bool {
+		return s.position.x == (len(g.board.squares[0]) - 1)
+	}) {
+		return false
+	}
+	// If any right square in the shape has a square directly to its right, return true
+	if some(rightSquares, func(s *square) bool {
+		return g.board.squares[s.position.y+HIDDEN_AREA][s.position.x+1] != nil
+	}) {
+		return false
+	}
+	return true
 }
 
 func (g *Game) TransferShapeToSquares() {
@@ -91,7 +127,6 @@ func (g *Game) TransferShapeToSquares() {
 func (g *Game) HandleInput() {
 	keys := []ebiten.Key{}
 	keys = inpututil.AppendPressedKeys(keys)
-	fmt.Println(keys)
 	// Do nothing if no keys are pressed or if more than one key is pressed,
 	// or if trying to move before the throttle period has passed
 	if len(keys) != 1 || g.updates-g.lastMove < g.throttle {
@@ -110,16 +145,21 @@ func (g *Game) HandleInput() {
 	g.lastMove = g.updates
 }
 
+func (g *Game) ClearFullLines() {
+	for y := len(g.board.squares) - 1; y >= 0; y-- {
+		for g.board.isLineFull(y) {
+			g.board.shiftLinesDown(y)
+		}
+	}
+}
+
 func (g *Game) Rotate() {
 	// TODO: implement me
 	// g.shape.rotate()
 }
 
 func (g *Game) MoveLeft() {
-	// TODO: Prevent from moving left if there are already squares there
-	if some(*g.shape, func(sqr *square) bool {
-		return sqr.position.x == 0
-	}) {
+	if !g.CanMoveLeft() {
 		return
 	}
 	for _, square := range *g.shape {
@@ -128,10 +168,7 @@ func (g *Game) MoveLeft() {
 }
 
 func (g *Game) MoveRight() {
-	// TODO: Prevent from moving right if there are already squares there
-	if some(*g.shape, func(sqr *square) bool {
-		return sqr.position.x == len(g.board.squares[0])-1
-	}) {
+	if !g.CanMoveRight() {
 		return
 	}
 	for _, square := range *g.shape {
@@ -140,7 +177,7 @@ func (g *Game) MoveRight() {
 }
 
 func (g *Game) MoveDown() {
-	if g.ShapeHasBottomContact() {
+	if !g.CanMoveDown() {
 		return
 	}
 	for _, sqr := range *g.shape {

@@ -30,6 +30,25 @@ func (b *Board) Draw(screen *ebiten.Image) {
 	}
 }
 
+// isLineFull returns true if the line is full
+func (b *Board) isLineFull(y int) bool {
+	return every(b.squares[y][:], func(sq *square) bool {
+		return sq != nil
+	})
+}
+
+func (b *Board) shiftLinesDown(y int) {
+	for y > 0 {
+		for x := 0; x < 10; x++ {
+			b.squares[y][x] = b.squares[y-1][x]
+			if b.squares[y][x] != nil {
+				b.squares[y][x].position.y++
+			}
+		}
+		y--
+	}
+}
+
 func makeBoard() *Board {
 	frame_color := color.RGBA{184, 184, 184, 0xff}
 	return &Board{
