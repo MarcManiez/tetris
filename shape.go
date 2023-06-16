@@ -5,12 +5,6 @@ import "github.com/hajimehoshi/ebiten/v2"
 // shape is a collection of squares representing a single tetris piece
 type shape []*square
 
-func (s *shape) moveDown() {
-	for _, sqr := range *s {
-		sqr.position.y++
-	}
-}
-
 func (s *shape) Draw(screen *ebiten.Image) {
 	for _, sqr := range *s {
 		sqr.Draw(screen)

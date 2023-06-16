@@ -27,8 +27,8 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval: 6,
-		throttle: 20,
+		interval: 30,
+		throttle: 10,
 		board:    makeBoard(),
 	}
 	g.spawnShape()
@@ -41,7 +41,7 @@ func (g *Game) Update() error {
 	g.HandleInput()
 	if g.updates_since_movement >= g.interval {
 		g.updates_since_movement = 0
-		g.shape.moveDown()
+		g.MoveDown()
 		if g.ShapeHasBottomContact() {
 			g.TransferShapeToSquares()
 			g.spawnShape()
@@ -58,27 +58,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return 800, 1200
-}
-
-func (g *Game) Rotate() {
-	// TODO: implement me
-	// g.shape.rotate()
-}
-
-func (g *Game) MoveLeft() {
-	// TODO: implement me
-	// g.shape.moveLeft()
-}
-
-func (g *Game) MoveRight() {
-	for _, square := range *g.shape {
-		square.position.x++
-	}
-}
-
-func (g *Game) MoveDown() {
-	// TODO: implement me
-	// g.shape.moveDown()
 }
 
 func (g *Game) spawnShape() {
@@ -129,4 +108,42 @@ func (g *Game) HandleInput() {
 		g.MoveLeft()
 	}
 	g.lastMove = g.updates
+}
+
+func (g *Game) Rotate() {
+	// TODO: implement me
+	// g.shape.rotate()
+}
+
+func (g *Game) MoveLeft() {
+	// TODO: Prevent from moving left if there are already squares there
+	if some(*g.shape, func(sqr *square) bool {
+		return sqr.position.x == 0
+	}) {
+		return
+	}
+	for _, square := range *g.shape {
+		square.position.x--
+	}
+}
+
+func (g *Game) MoveRight() {
+	// TODO: Prevent from moving right if there are already squares there
+	if some(*g.shape, func(sqr *square) bool {
+		return sqr.position.x == len(g.board.squares[0])-1
+	}) {
+		return
+	}
+	for _, square := range *g.shape {
+		square.position.x++
+	}
+}
+
+func (g *Game) MoveDown() {
+	if g.ShapeHasBottomContact() {
+		return
+	}
+	for _, sqr := range *g.shape {
+		sqr.position.y++
+	}
 }
