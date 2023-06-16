@@ -58,13 +58,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Draw shape
 	for _, sqr := range *g.shape {
 		for _, rect := range *sqr {
-			DrawRectangle(screen, rect)
+			rect.DrawRectangle(screen)
 		}
 	}
 	// Draw other squares
 	for _, sqr := range g.squares {
 		for _, rect := range *sqr {
-			DrawRectangle(screen, rect)
+			rect.DrawRectangle(screen)
 		}
 	}
 	// ebitenutil.DebugPrint(screen, "Hello, World!")
@@ -102,15 +102,9 @@ func (g *Game) spawnShape() {
 	g.shape = shapeFuncs[index](coords{x: 5 * 48, y: -48 + 2})
 }
 
-func DrawRectangle(screen *ebiten.Image, rect *rectangle) {
-	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Translate(float64(rect.x), float64(rect.y))
-	screen.DrawImage(rect.img, op)
-}
-
 func (g *Game) DrawGameFrame(screen *ebiten.Image) {
 	for _, rect := range g.frame {
-		DrawRectangle(screen, rect)
+		rect.DrawRectangle(screen)
 	}
 }
 
