@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -81,25 +82,24 @@ func (g *Game) MoveDown() {
 }
 
 func (g *Game) spawnShape() {
-	// index := rand.Intn(7)
-	g.shape = shapeFuncs[6](coords{x: 5, y: -1})
+	index := rand.Intn(7)
+	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
 }
 
 func (g *Game) ShapeHasBottomContact() bool {
-	// // Find lowest y value of shape
-	// lowestShapeY := g.shape.getLowestY()
-	// // See if bottom frame is directly below lowest y value
-	// if lowestShapeY == g.frame[2].y {
-	// 	return true
-	// }
-	// // Search squares to see if any are directly below lowest y value
-	// for _, sqr := range g.squares {
-	// 	top := sqr[0]
-	// 	// TODO: there's a bug here: the shape stops even when there's a gap, because it uses the top-most square on the entire game surface. Instead, it should collect all the bottom squares of the shape and see if any of them are touching the top of any of the squares in the squares collection
-	// 	if top.y == lowestShapeY {
-	// 		return true
-	// 	}
-	// }
+	// Select lowest squares from a shape
+	bottomSquares := g.shape.getBottomSquares()
+	lowestY := bottomSquares[0].position.y
+	if lowestY == (len(g.board.squares) - 1 - HIDDEN_AREA) {
+		return true
+	}
+
+	// If every bottom square in the shape has a square directly below it, return true
+	if some(bottomSquares, func(s *square) bool {
+		return g.board.squares[s.position.y+1+HIDDEN_AREA][s.position.x] != nil
+	}) {
+		return true
+	}
 	return false
 }
 

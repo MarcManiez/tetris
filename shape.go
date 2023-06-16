@@ -17,17 +17,14 @@ func (s *shape) Draw(screen *ebiten.Image) {
 	}
 }
 
-// getLowestY returns the lowest y value of the shape, and the x value of the rectangle with that y value
-// func (s *shape) getLowestY() int {
-// 	var lowestShapeY int
-// 	for _, sqr := range *s {
-// 		for _, rect := range *sqr {
-// 			height := rect.img.Bounds().Dy()
-// 			height += rect.y
-// 			if height > lowestShapeY {
-// 				lowestShapeY = height
-// 			}
-// 		}
-// 	}
-// 	return lowestShapeY
-// }
+// getBottomSquares returns the squares that are at the bottom of the shape
+func (s *shape) getBottomSquares() []*square {
+	return filter(*s, func(sqr *square) bool {
+		return !some(*s, func(sqr2 *square) bool {
+			if sqr == sqr2 {
+				return false
+			}
+			return sqr2.position.y == sqr.position.y+1 && sqr2.position.x == sqr.position.x
+		})
+	})
+}
