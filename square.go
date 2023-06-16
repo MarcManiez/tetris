@@ -1,21 +1,55 @@
 package main
 
-import "image/color"
+import (
+	"image/color"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 // square is 5 rectangles: 4 for the border, with another one for the middle
-type square [5]*rectangle
+type square struct {
+	position coords
+	color    color.Color
+}
 
-func MakeSquare(clr color.Color, position coords) *square {
-	arr := square{}
-	// Top
-	arr[0] = makeRectangle(coords{46, 2}, color.RGBA{184, 184, 184, 0xff}, coords{position.x, position.y})
-	// Bottom
-	arr[1] = makeRectangle(coords{46, 2}, color.RGBA{136, 136, 136, 0xff}, coords{position.x + 2, position.y + 46})
-	// Right
-	arr[2] = makeRectangle(coords{2, 46}, color.RGBA{200, 200, 200, 0xff}, coords{position.x + 46, position.y})
-	// Left
-	arr[3] = makeRectangle(coords{2, 46}, color.RGBA{150, 150, 150, 0xff}, coords{position.x, position.y + 2})
-	// Middle
-	arr[4] = makeRectangle(coords{44, 44}, clr, coords{position.x + 2, position.y + 2})
-	return &arr
+const SQUARE_HEIGHT = 48
+const SQUARE_BORDER_WIDTH = 2
+
+func (s *square) Draw(screen *ebiten.Image) {
+	insideWidth := SQUARE_HEIGHT - SQUARE_BORDER_WIDTH*2
+	arr := []*rectangle{
+		// Top
+		makeRectangle(
+			coords{(SQUARE_HEIGHT - SQUARE_BORDER_WIDTH), SQUARE_BORDER_WIDTH},
+			color.RGBA{184, 184, 184, 0xff},
+			coords{s.position.x * SQUARE_HEIGHT, s.position.y*SQUARE_HEIGHT + FRAME_WIDTH},
+		),
+		// Bottom
+		makeRectangle(
+			coords{(SQUARE_HEIGHT - SQUARE_BORDER_WIDTH), SQUARE_BORDER_WIDTH},
+			color.RGBA{136, 136, 136, 0xff},
+			coords{s.position.x*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH, s.position.y*SQUARE_HEIGHT + (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH) + FRAME_WIDTH},
+		),
+		// Right
+		makeRectangle(
+			coords{SQUARE_BORDER_WIDTH, (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH)},
+			color.RGBA{200, 200, 200, 0xff},
+			coords{s.position.x*SQUARE_HEIGHT + (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH), s.position.y*SQUARE_HEIGHT + FRAME_WIDTH},
+		),
+		// Left
+		makeRectangle(
+			coords{SQUARE_BORDER_WIDTH, (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH)},
+			color.RGBA{150, 150, 150, 0xff},
+			coords{s.position.x * SQUARE_HEIGHT, s.position.y*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + FRAME_WIDTH},
+		),
+		// Middle
+		makeRectangle(
+			coords{insideWidth, insideWidth},
+			s.color,
+			coords{s.position.x*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH, s.position.y*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + FRAME_WIDTH},
+		),
+	}
+	for _, rect := range arr {
+		rect.DrawRectangle(screen)
+	}
 }

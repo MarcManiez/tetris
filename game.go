@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 	"image/color"
-	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+const FRAME_WIDTH = 2
+
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
-	shape   *shape
-	squares []*square
-	frame   [4]*rectangle
+	shape *shape
+	board Board
+	// TODO: move this to the board struct
+	frame [4]*rectangle
 	// Last update call for which a movement key was pressed
 	lastMove int
 	// Throttle value for player movement
@@ -31,10 +33,10 @@ func initGame() *Game {
 		interval: 6,
 		throttle: 20,
 		frame: [4]*rectangle{
-			makeRectangle(coords{482, 2}, frame_clr, coords{0, 0}),
-			makeRectangle(coords{2, 962}, frame_clr, coords{482, 0}),
-			makeRectangle(coords{482, 2}, frame_clr, coords{2, 962}),
-			makeRectangle(coords{2, 962}, frame_clr, coords{0, 2}),
+			makeRectangle(coords{482, FRAME_WIDTH}, frame_clr, coords{0, 0}),
+			makeRectangle(coords{FRAME_WIDTH, 962}, frame_clr, coords{482, 0}),
+			makeRectangle(coords{482, FRAME_WIDTH}, frame_clr, coords{FRAME_WIDTH, 962}),
+			makeRectangle(coords{FRAME_WIDTH, 962}, frame_clr, coords{0, FRAME_WIDTH}),
 		},
 	}
 	g.spawnShape()
@@ -47,7 +49,7 @@ func (g *Game) Update() error {
 	g.HandleInput()
 	if g.updates_since_movement >= g.interval {
 		g.updates_since_movement = 0
-		g.shape.move()
+		g.shape.moveDown()
 		if g.ShapeHasBottomContact() {
 			g.TransferShapeToSquares()
 			g.spawnShape()
@@ -58,18 +60,8 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.DrawGameFrame(screen)
-	// Draw shape
-	for _, sqr := range *g.shape {
-		for _, rect := range *sqr {
-			rect.DrawRectangle(screen)
-		}
-	}
-	// Draw other squares
-	for _, sqr := range g.squares {
-		for _, rect := range *sqr {
-			rect.DrawRectangle(screen)
-		}
-	}
+	g.shape.Draw(screen)
+	g.board.Draw(screen)
 	// ebitenutil.DebugPrint(screen, "Hello, World!")
 }
 
@@ -89,9 +81,7 @@ func (g *Game) MoveLeft() {
 
 func (g *Game) MoveRight() {
 	for _, square := range *g.shape {
-		for _, rect := range *square {
-			rect.x += 48
-		}
+		square.position.x++
 	}
 }
 
@@ -101,8 +91,8 @@ func (g *Game) MoveDown() {
 }
 
 func (g *Game) spawnShape() {
-	index := rand.Intn(7)
-	g.shape = shapeFuncs[index](coords{x: 5 * 48, y: -48 + 2})
+	// index := rand.Intn(7)
+	g.shape = shapeFuncs[6](coords{x: 5, y: -1})
 }
 
 func (g *Game) DrawGameFrame(screen *ebiten.Image) {
@@ -112,26 +102,26 @@ func (g *Game) DrawGameFrame(screen *ebiten.Image) {
 }
 
 func (g *Game) ShapeHasBottomContact() bool {
-	// Find lowest y value of shape
-	lowestShapeY := g.shape.getLowestY()
-	// See if bottom frame is directly below lowest y value
-	if lowestShapeY == g.frame[2].y {
-		return true
-	}
-	// Search squares to see if any are directly below lowest y value
-	for _, sqr := range g.squares {
-		top := sqr[0]
-		// TODO: there's a bug here: the shape stops even when there's a gap, because it uses the top-most square on the entire game surface. Instead, it should collect all the bottom squares of the shape and see if any of them are touching the top of any of the squares in the squares collection
-		if top.y == lowestShapeY {
-			return true
-		}
-	}
+	// // Find lowest y value of shape
+	// lowestShapeY := g.shape.getLowestY()
+	// // See if bottom frame is directly below lowest y value
+	// if lowestShapeY == g.frame[2].y {
+	// 	return true
+	// }
+	// // Search squares to see if any are directly below lowest y value
+	// for _, sqr := range g.squares {
+	// 	top := sqr[0]
+	// 	// TODO: there's a bug here: the shape stops even when there's a gap, because it uses the top-most square on the entire game surface. Instead, it should collect all the bottom squares of the shape and see if any of them are touching the top of any of the squares in the squares collection
+	// 	if top.y == lowestShapeY {
+	// 		return true
+	// 	}
+	// }
 	return false
 }
 
 func (g *Game) TransferShapeToSquares() {
 	for _, sqr := range *g.shape {
-		g.squares = append(g.squares, sqr)
+		g.board.AddSquare(sqr)
 	}
 }
 

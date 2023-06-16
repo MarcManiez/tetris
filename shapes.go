@@ -15,10 +15,10 @@ type shapes [7]*shape
 func makeI(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{0, 255, 255, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 3*48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 2*48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 3}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 2}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -26,10 +26,10 @@ func makeI(position coords) *shape {
 func makeJ(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{0, 0, 255, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 2*48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x - 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 2}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x - 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -37,10 +37,10 @@ func makeJ(position coords) *shape {
 func makeL(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{255, 165, 0, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 2*48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 2}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -48,10 +48,10 @@ func makeL(position coords) *shape {
 func makeO(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{255, 255, 0, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -59,10 +59,10 @@ func makeO(position coords) *shape {
 func makeS(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{0, 128, 0, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x - 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x - 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -70,10 +70,10 @@ func makeS(position coords) *shape {
 func makeT(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{128, 0, 128, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x - 48, position.y}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x - 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
@@ -81,10 +81,10 @@ func makeT(position coords) *shape {
 func makeZ(position coords) *shape {
 	shp := shape{}
 	clr := color.RGBA{255, 0, 0, 0xff}
-	shp = append(shp, MakeSquare(clr, coords{position.x, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x - 48, position.y - 48}))
-	shp = append(shp, MakeSquare(clr, coords{position.x + 48, position.y}))
-	shp = append(shp, MakeSquare(clr, position))
+	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x - 1, y: position.y - 1}, color: clr})
+	shp = append(shp, &square{position: coords{x: position.x + 1, y: position.y}, color: clr})
+	shp = append(shp, &square{position: position, color: clr})
 	return &shp
 }
 
