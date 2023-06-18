@@ -75,3 +75,10 @@ func (b *Board) isCoordOutOfBounds(c coords) bool {
 func (b *Board) isCoordValid(c coords) bool {
 	return !b.isCoordOutOfBounds(c) && !b.isCoordOccupied(c)
 }
+
+// isGameLost returns true if the game is lost
+func (b *Board) isGameOver() bool {
+	return some(b.squares[HIDDEN_AREA-1][:], func(sq *square) bool {
+		return sq != nil
+	})
+}

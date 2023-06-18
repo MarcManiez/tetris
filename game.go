@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -29,7 +30,7 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval: 60,
+		interval: 6,
 		throttle: 10,
 		board:    makeBoard(),
 		// Uncomment for music
@@ -40,19 +41,25 @@ func initGame() *Game {
 }
 
 func (g *Game) Update() error {
-	g.updates++
-	g.updates_since_movement++
-	g.HandleInput()
-	g.ClearFullLines()
-	if g.updates_since_movement >= g.interval {
-		g.updates_since_movement = 0
-		g.MoveDown()
-		// TODO: there's a bug where the shape can't settle on the bottom after a rotation
-		fmt.Println(g.CanMoveDown())
-		g.shape.print()
-		if !g.CanMoveDown() {
-			g.TransferShapeToSquares()
-			g.spawnShape()
+	if g.board.isGameOver() {
+		// ebitenutil.DebugPrint(screen, "Game over!")
+		// Print game over in middle of the board
+		// Add button to restart the game
+	} else {
+		g.updates++
+		g.updates_since_movement++
+		g.HandleInput()
+		g.ClearFullLines()
+		if g.updates_since_movement >= g.interval {
+			g.updates_since_movement = 0
+			g.MoveDown()
+			// TODO: there's a bug where the shape can't settle on the bottom after a rotation
+			fmt.Println(g.CanMoveDown())
+			g.shape.print()
+			if !g.CanMoveDown() {
+				g.TransferShapeToSquares()
+				g.spawnShape()
+			}
 		}
 	}
 	return nil
@@ -61,6 +68,9 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.shape.Draw(screen)
 	g.board.Draw(screen)
+	if g.board.isGameOver() {
+		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
+	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
