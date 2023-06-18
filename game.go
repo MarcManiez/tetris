@@ -1,9 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"log"
 	"math/rand"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/audio"
+	"github.com/hajimehoshi/ebiten/v2/audio/wav"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -22,13 +27,35 @@ type Game struct {
 	// Number of updates between shape movements
 	interval               int
 	updates_since_movement int
+	audioContext           *audio.Context
 }
 
 func initGame() *Game {
+	audioContext := audio.NewContext(44100)
+	v, err := os.ReadFile("litha.wav")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	wavPlayer, err := wav.DecodeWithSampleRate(44100, bytes.NewReader(v))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	musicPlayer, err := audioContext.NewPlayer(wavPlayer)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	musicPlayer.Play()
+	if err != nil {
+		log.Fatal(err)
+	}
 	g := Game{
-		interval: 60,
-		throttle: 10,
-		board:    makeBoard(),
+		interval:     60,
+		throttle:     10,
+		board:        makeBoard(),
+		audioContext: audioContext,
 	}
 	g.spawnShape()
 	return &g

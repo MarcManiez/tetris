@@ -1,15 +1,5 @@
 package main
 
-// Contains checks if a value exists in a slice.
-func contains[T comparable](elems []T, v T) bool {
-	for _, s := range elems {
-		if v == s {
-			return true
-		}
-	}
-	return false
-}
-
 // filter returns a new slice containing only the elements for which the callback function returns true.
 func filter[T any](slice []T, callback func(elem T) bool) []T {
 	var filtered []T
