@@ -16,6 +16,9 @@ type iShape struct {
 func (s *iShape) Rotate() {
 	squares := s.squares()
 	if s.isHorizontal() {
+		if squares[0].position.y == 0 || squares[0].position.y >= 18 {
+			return
+		}
 		squares[0].position.x += 2
 		squares[0].position.y -= 1
 		squares[1].position.x += 1
@@ -23,6 +26,9 @@ func (s *iShape) Rotate() {
 		squares[3].position.x -= 1
 		squares[3].position.y += 2
 	} else {
+		if squares[0].position.x < 2 || squares[0].position.x == 9 {
+			return
+		}
 		squares[0].position.x -= 2
 		squares[0].position.y += 1
 		squares[1].position.x -= 1

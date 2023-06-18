@@ -28,10 +28,11 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval:    60,
-		throttle:    10,
-		board:       makeBoard(),
-		musicPlayer: InitMusic(),
+		interval: 60,
+		throttle: 10,
+		board:    makeBoard(),
+		// Uncomment for music
+		// musicPlayer: InitMusic(),
 	}
 	g.spawnShape()
 	return &g
@@ -182,7 +183,5 @@ func (g *Game) MoveDown() {
 	if !g.CanMoveDown() {
 		return
 	}
-	for _, sqr := range g.shape.squares() {
-		sqr.position.y++
-	}
+	g.shape.MoveDown()
 }

@@ -8,6 +8,7 @@ type shapeImpl []*square
 type shape interface {
 	Rotate()
 	Draw(screen *ebiten.Image)
+	MoveDown()
 	getBottomSquares() []*square
 	getLeftSquares() []*square
 	getRightSquares() []*square
@@ -17,6 +18,12 @@ type shape interface {
 func (s *shapeImpl) Draw(screen *ebiten.Image) {
 	for _, sqr := range *s {
 		sqr.Draw(screen)
+	}
+}
+
+func (s *shapeImpl) MoveDown() {
+	for _, sqr := range s.squares() {
+		sqr.position.y++
 	}
 }
 
