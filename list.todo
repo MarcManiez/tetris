@@ -19,7 +19,7 @@ list.todo
   - [x] handle edge case where rotation would make you cross a wall or another piece
   - [ ] write more tests
 - [x] game losing conditions
-- [ ] restart game
+- [x] restart game
 - [ ] show future shape
 - [ ] increase repeat rate
 - [ ] make music loop

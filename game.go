@@ -42,9 +42,9 @@ func initGame() *Game {
 
 func (g *Game) Update() error {
 	if g.board.isGameOver() {
-		// ebitenutil.DebugPrint(screen, "Game over!")
-		// Print game over in middle of the board
-		// Add button to restart the game
+		if includes(getPressedKeys(), ebiten.KeyEnter) {
+			g.restart()
+		}
 	} else {
 		g.updates++
 		g.updates_since_movement++
@@ -53,9 +53,6 @@ func (g *Game) Update() error {
 		if g.updates_since_movement >= g.interval {
 			g.updates_since_movement = 0
 			g.MoveDown()
-			// TODO: there's a bug where the shape can't settle on the bottom after a rotation
-			fmt.Println(g.CanMoveDown())
-			g.shape.print()
 			if !g.CanMoveDown() {
 				g.TransferShapeToSquares()
 				g.spawnShape()
@@ -70,6 +67,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.Draw(screen)
 	if g.board.isGameOver() {
 		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
+		ebitenutil.DebugPrintAt(screen, "Press \"Enter\" to play again", 500, 20)
 	}
 }
 
@@ -132,8 +130,8 @@ func (g *Game) TransferShapeToSquares() {
 }
 
 func (g *Game) HandleInput() {
-	keys := []ebiten.Key{}
-	keys = inpututil.AppendPressedKeys(keys)
+	keys := getPressedKeys()
+	fmt.Println("handling input", keys)
 	// Do nothing if no keys are pressed or if more than one key is pressed,
 	// or if trying to move before the throttle period has passed
 	if len(keys) != 1 || g.updates-g.lastMove < g.throttle {
@@ -207,4 +205,17 @@ func (g *Game) isShapePositionValid() bool {
 		}
 	}
 	return true
+}
+
+// restart resets the game after a "game over"
+func (g *Game) restart() {
+	g.board = makeBoard()
+	g.updates_since_movement = 0
+	g.spawnShape()
+}
+
+func getPressedKeys() []ebiten.Key {
+	keys := []ebiten.Key{}
+	keys = inpututil.AppendPressedKeys(keys)
+	return keys
 }

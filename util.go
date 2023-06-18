@@ -35,3 +35,10 @@ func some[T any](slice []T, callback func(elem T) bool) bool {
 func none[T any](slice []T, callback func(elem T) bool) bool {
 	return !some(slice, callback)
 }
+
+// includes returns true if the slice contains the element.
+func includes[T comparable](slice []T, elem T) bool {
+	return some(slice, func(s T) bool {
+		return s == elem
+	})
+}
