@@ -1,0 +1,23 @@
+list.todo
+
+- [x] make frame for game: 10 x 20 cubes + an extra 4 invisible squares on top where blocks spawn
+- [x] make groups of squares for shapes
+- [x] handle downward motion of shapes
+- [x] shapes hitting the bottom, or other shapes should stop moving
+  - [x] If the spot beneath the shape is the frame, or a square, then:
+    - [x] transfer the shape over to the squares
+    - [x] spawn another shape
+
+
+
+- [x] handle user input to move shapes
+- [x] line-erasing rule
+- [ ] piece rotation
+  - hardcode all variations, but how to make it dynamic?
+  - there has to be some translation logic
+  - choosing an axis and rotating around it seems like it could be an issue for shapes like the "i", as it would mean there's a way to make the shape go up just by rotating it
+  - [ ] handle edge case where rotation would make you cross a wall or another piece
+  - [ ] write more tests
+- [ ] game losing conditions
+- [ ] show future shape
+- [ ] increase repeat rate

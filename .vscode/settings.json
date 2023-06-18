@@ -3,6 +3,7 @@
     "ebiten",
     "ebitenutil",
     "inpututil",
+    "stretchr",
     "tetris"
   ],
   "cSpell.ignoreWords": [

@@ -11,7 +11,7 @@ const FRAME_WIDTH = 2
 
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
-	shape *shape
+	shape shape
 	board *Board
 	// Last update call for which a movement key was pressed
 	lastMove int
@@ -26,7 +26,7 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval: 10,
+		interval: 60,
 		throttle: 10,
 		board:    makeBoard(),
 	}
@@ -61,7 +61,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func (g *Game) spawnShape() {
-	index := rand.Intn(7)
+	index := rand.Intn(len(shapeFuncs))
 	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
 }
 
@@ -119,7 +119,7 @@ func (g *Game) CanMoveRight() bool {
 }
 
 func (g *Game) TransferShapeToSquares() {
-	for _, sqr := range *g.shape {
+	for _, sqr := range g.shape.squares() {
 		g.board.AddSquare(sqr)
 	}
 }
@@ -154,15 +154,14 @@ func (g *Game) ClearFullLines() {
 }
 
 func (g *Game) Rotate() {
-	// TODO: implement me
-	// g.shape.rotate()
+	g.shape.Rotate()
 }
 
 func (g *Game) MoveLeft() {
 	if !g.CanMoveLeft() {
 		return
 	}
-	for _, square := range *g.shape {
+	for _, square := range g.shape.squares() {
 		square.position.x--
 	}
 }
@@ -171,7 +170,7 @@ func (g *Game) MoveRight() {
 	if !g.CanMoveRight() {
 		return
 	}
-	for _, square := range *g.shape {
+	for _, square := range g.shape.squares() {
 		square.position.x++
 	}
 }
@@ -180,7 +179,7 @@ func (g *Game) MoveDown() {
 	if !g.CanMoveDown() {
 		return
 	}
-	for _, sqr := range *g.shape {
+	for _, sqr := range g.shape.squares() {
 		sqr.position.y++
 	}
 }
