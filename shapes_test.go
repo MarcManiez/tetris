@@ -76,3 +76,36 @@ func TestRotateJ(t *testing.T) {
 	expectedBottom = coords{x: 6, y: 3}
 	require.Equal(expectedBottom, shp.squares()[3].position)
 }
+
+func TestRotateI(t *testing.T) {
+	require := require.New(t)
+	shp := makeI(coords{x: 7, y: 10})
+	expectedTop := coords{x: 7, y: 7}
+	require.Equal(expectedTop, shp.squares()[0].position) // top
+	expectedMiddle := coords{x: 7, y: 8}
+	require.Equal(expectedMiddle, shp.squares()[1].position)
+	expectedMiddle = coords{x: 7, y: 9}
+	require.Equal(expectedMiddle, shp.squares()[2].position)
+	expectedBottom := coords{x: 7, y: 10}
+	require.Equal(expectedBottom, shp.squares()[3].position) // bottom
+
+	shp.Rotate()
+	expectedLeft := coords{x: 5, y: 8}
+	require.Equal(expectedLeft, shp.squares()[0].position) // left
+	expectedMiddle = coords{x: 6, y: 8}
+	require.Equal(expectedMiddle, shp.squares()[1].position)
+	expectedMiddle = coords{x: 7, y: 8}
+	require.Equal(expectedMiddle, shp.squares()[2].position)
+	expectedRight := coords{x: 8, y: 8}
+	require.Equal(expectedRight, shp.squares()[3].position) // right
+
+	shp.Rotate()
+	expectedTop = coords{x: 7, y: 7}
+	require.Equal(expectedTop, shp.squares()[0].position) // top
+	expectedMiddle = coords{x: 7, y: 8}
+	require.Equal(expectedMiddle, shp.squares()[1].position)
+	expectedMiddle = coords{x: 7, y: 9}
+	require.Equal(expectedMiddle, shp.squares()[2].position)
+	expectedBottom = coords{x: 7, y: 10}
+	require.Equal(expectedBottom, shp.squares()[3].position) // bottom
+}

@@ -9,14 +9,41 @@ type coords struct {
 	y int
 }
 
+type iShape struct {
+	shapeImpl
+}
+
+func (s *iShape) Rotate() {
+	squares := s.squares()
+	if s.isHorizontal() {
+		squares[0].position.x += 2
+		squares[0].position.y -= 1
+		squares[1].position.x += 1
+		squares[2].position.y += 1
+		squares[3].position.x -= 1
+		squares[3].position.y += 2
+	} else {
+		squares[0].position.x -= 2
+		squares[0].position.y += 1
+		squares[1].position.x -= 1
+		squares[2].position.y -= 1
+		squares[3].position.x += 1
+		squares[3].position.y -= 2
+	}
+}
+
+func (s *iShape) isHorizontal() bool {
+	return s.squares()[0].position.y == s.squares()[1].position.y
+}
+
 // i block
 func makeI(position coords) shape {
-	shp := shapeImpl{}
+	shp := iShape{}
 	clr := color.RGBA{0, 255, 255, 0xff}
-	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 3}, color: clr})
-	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 2}, color: clr})
-	shp = append(shp, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
-	shp = append(shp, &square{position: coords{x: position.x, y: position.y}, color: clr})
+	shp.shapeImpl = append(shp.shapeImpl, &square{position: coords{x: position.x, y: position.y - 3}, color: clr})
+	shp.shapeImpl = append(shp.shapeImpl, &square{position: coords{x: position.x, y: position.y - 2}, color: clr})
+	shp.shapeImpl = append(shp.shapeImpl, &square{position: coords{x: position.x, y: position.y - 1}, color: clr})
+	shp.shapeImpl = append(shp.shapeImpl, &square{position: coords{x: position.x, y: position.y}, color: clr})
 	return &shp
 }
 
