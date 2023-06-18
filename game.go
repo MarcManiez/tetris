@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -46,6 +47,9 @@ func (g *Game) Update() error {
 	if g.updates_since_movement >= g.interval {
 		g.updates_since_movement = 0
 		g.MoveDown()
+		// TODO: there's a bug where the shape can't settle on the bottom after a rotation
+		fmt.Println(g.CanMoveDown())
+		g.shape.print()
 		if !g.CanMoveDown() {
 			g.TransferShapeToSquares()
 			g.spawnShape()
@@ -57,7 +61,6 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.shape.Draw(screen)
 	g.board.Draw(screen)
-	// ebitenutil.DebugPrint(screen, "Hello, World!")
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -70,20 +73,10 @@ func (g *Game) spawnShape() {
 }
 
 func (g *Game) CanMoveDown() bool {
-	// Select lowest squares from a shape
 	bottomSquares := g.shape.getBottomSquares()
-	lowestY := bottomSquares[0].position.y
-	if lowestY == (len(g.board.squares) - 1 - HIDDEN_AREA) {
-		return false
-	}
-
-	// If every bottom square in the shape has a square directly below it, return true
-	if some(bottomSquares, func(s *square) bool {
-		return g.board.squares[s.position.y+1+HIDDEN_AREA][s.position.x] != nil
-	}) {
-		return false
-	}
-	return true
+	return none(bottomSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x, y: s.position.y + 1})
+	})
 }
 
 // CanMoveLeft returns true if the shape can move left

@@ -30,3 +30,8 @@ func some[T any](slice []T, callback func(elem T) bool) bool {
 	}
 	return false
 }
+
+// none returns true if no element in the slice returns true for the callback function.
+func none[T any](slice []T, callback func(elem T) bool) bool {
+	return !some(slice, callback)
+}

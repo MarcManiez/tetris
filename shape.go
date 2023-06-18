@@ -1,6 +1,10 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"fmt"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 // shapeImpl is a collection of squares representing a single tetris piece
 type shapeImpl []*square
@@ -15,6 +19,7 @@ type shape interface {
 	squares() []*square
 	copyPositions() [4]*coords
 	translate([4]*coords)
+	print()
 }
 
 func (s *shapeImpl) Draw(screen *ebiten.Image) {
@@ -73,7 +78,7 @@ func (s *shapeImpl) squares() []*square {
 // getBottomSquares returns the squares that are at the bottom of the shape
 func (s *shapeImpl) getBottomSquares() []*square {
 	return filter(*s, func(sqr *square) bool {
-		return !some(*s, func(sqr2 *square) bool {
+		return none(*s, func(sqr2 *square) bool {
 			if sqr == sqr2 {
 				return false
 			}
@@ -85,7 +90,7 @@ func (s *shapeImpl) getBottomSquares() []*square {
 // getLeftSquares returns the squares that are at the left of the shape
 func (s *shapeImpl) getLeftSquares() []*square {
 	return filter(*s, func(sqr *square) bool {
-		return !some(*s, func(sqr2 *square) bool {
+		return none(*s, func(sqr2 *square) bool {
 			if sqr == sqr2 {
 				return false
 			}
@@ -97,11 +102,18 @@ func (s *shapeImpl) getLeftSquares() []*square {
 // getRightSquares returns the squares that are at the right of the shape
 func (s *shapeImpl) getRightSquares() []*square {
 	return filter(*s, func(sqr *square) bool {
-		return !some(*s, func(sqr2 *square) bool {
+		return none(*s, func(sqr2 *square) bool {
 			if sqr == sqr2 {
 				return false
 			}
 			return sqr2.position.x == sqr.position.x+1 && sqr2.position.y == sqr.position.y
 		})
 	})
+}
+
+// print prints the shape to the console
+func (s *shapeImpl) print() {
+	for _, sqr := range *s {
+		fmt.Printf("x: %d, y: %d\n", sqr.position.x, sqr.position.y)
+	}
 }
