@@ -60,3 +60,18 @@ func makeBoard() *Board {
 		},
 	}
 }
+
+// isCoordOccupied returns true if the coordinate is occupied
+func (b *Board) isCoordOccupied(c coords) bool {
+	return b.squares[c.y+HIDDEN_AREA][c.x] != nil
+}
+
+// isCoordOutOfBounds returns true if the coordinate is out of bounds
+func (b *Board) isCoordOutOfBounds(c coords) bool {
+	return c.x < 0 || c.x >= 10 || c.y+HIDDEN_AREA >= 24 || c.y+HIDDEN_AREA < 0
+}
+
+// isCoordValid returns true if the coordinate is valid
+func (b *Board) isCoordValid(c coords) bool {
+	return !b.isCoordOutOfBounds(c) && !b.isCoordOccupied(c)
+}

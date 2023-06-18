@@ -158,7 +158,16 @@ func (g *Game) ClearFullLines() {
 }
 
 func (g *Game) Rotate() {
-	g.shape.Rotate()
+	originalPositions := g.shape.copyPositions()
+	// try rotating up to three times
+	for i := 0; i < 3; i++ {
+		g.shape.Rotate()
+		if g.isShapePositionValid() {
+			return
+		}
+	}
+	// Restore initial position if no rotations were valid
+	g.shape.translate(originalPositions)
 }
 
 func (g *Game) MoveLeft() {
@@ -184,4 +193,15 @@ func (g *Game) MoveDown() {
 		return
 	}
 	g.shape.MoveDown()
+}
+
+// isShapePositionValid returns true if the shape is not colliding with any squares
+// or the edge of the board
+func (g *Game) isShapePositionValid() bool {
+	for _, square := range g.shape.squares() {
+		if !g.board.isCoordValid(square.position) {
+			return false
+		}
+	}
+	return true
 }

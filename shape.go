@@ -13,6 +13,8 @@ type shape interface {
 	getLeftSquares() []*square
 	getRightSquares() []*square
 	squares() []*square
+	copyPositions() [4]*coords
+	translate([4]*coords)
 }
 
 func (s *shapeImpl) Draw(screen *ebiten.Image) {
@@ -45,6 +47,22 @@ func (s *shapeImpl) Rotate() {
 			s.position.y = s.position.x - recalibration
 			s.position.x = middleSquare.position.y - originalY - 1 + maxX
 		}
+	}
+}
+
+// copyPositions copies the positions of the squares in the shape
+func (s *shapeImpl) copyPositions() [4]*coords {
+	var positions [4]*coords
+	for i, sqr := range *s {
+		positions[i] = &coords{sqr.position.x, sqr.position.y}
+	}
+	return positions
+}
+
+// translate restores the positions of the squares in the shape
+func (s *shapeImpl) translate(positions [4]*coords) {
+	for i, sqr := range *s {
+		sqr.position = *positions[i]
 	}
 }
 
