@@ -20,7 +20,7 @@ list.todo
   - [ ] write more tests
 - [x] game losing conditions
 - [x] restart game
-- [ ] show future shape
+- [x] show future shape
 - [ ] increase repeat rate
 - [ ] make music loop
 - [ ] levels

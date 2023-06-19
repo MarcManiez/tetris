@@ -9,14 +9,14 @@ import (
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.DrawFrame(screen)
-	g.nextShape(screen)
+	g.DrawNextShape(screen)
 	if g.paused {
 		renderer := makeTextRenderer(64)
 		renderer.SetTarget(screen)
 		renderer.SetColor(makeChangingColor())
 		renderer.Draw("PAUSED", 245, 475)
 	} else {
-		g.shape.Draw(screen)
+		g.board.DrawShape(screen, g.currentShape)
 		g.board.DrawSquares(screen)
 	}
 	if g.board.isGameOver() {
@@ -25,10 +25,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 }
 
-// nextShape renders the next shape module
-func (g *Game) nextShape(screen *ebiten.Image) {
+// DrawNextShape renders the next shape module
+func (g *Game) DrawNextShape(screen *ebiten.Image) {
 	renderer := makeTextRenderer(24)
 	renderer.SetTarget(screen)
 	renderer.SetColor(color.White)
 	renderer.Draw("Next Shape", 600, 475)
+	g.nextShape.Draw(screen, coords{580, 650})
 }

@@ -11,7 +11,7 @@ type shapeImpl []*square
 
 type shape interface {
 	Rotate()
-	Draw(screen *ebiten.Image)
+	Draw(screen *ebiten.Image, origin coords)
 	MoveDown()
 	MoveLeft()
 	MoveRight()
@@ -20,13 +20,14 @@ type shape interface {
 	getRightSquares() []*square
 	squares() []*square
 	copyPositions() [4]*coords
-	translate([4]*coords)
+	setCoordinates([4]*coords)
+	translate(coords)
 	print()
 }
 
-func (s *shapeImpl) Draw(screen *ebiten.Image) {
+func (s *shapeImpl) Draw(screen *ebiten.Image, origin coords) {
 	for _, sqr := range *s {
-		sqr.Draw(screen)
+		sqr.Draw(screen, origin)
 	}
 }
 
@@ -78,10 +79,18 @@ func (s *shapeImpl) copyPositions() [4]*coords {
 	return positions
 }
 
-// translate restores the positions of the squares in the shape
-func (s *shapeImpl) translate(positions [4]*coords) {
+// setCoordinates restores the positions of the squares in the shape
+func (s *shapeImpl) setCoordinates(positions [4]*coords) {
 	for i, sqr := range *s {
 		sqr.position = *positions[i]
+	}
+}
+
+// translate translates the shape by the given coordinates
+func (s *shapeImpl) translate(coordinates coords) {
+	for _, sqr := range *s {
+		sqr.position.x += coordinates.x
+		sqr.position.y += coordinates.y
 	}
 }
 

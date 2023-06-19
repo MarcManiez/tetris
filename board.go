@@ -9,13 +9,18 @@ import (
 const HIDDEN_AREA = 4
 
 type Board struct {
-	squares [24][10]*square
-	frame   [4]*rectangle
+	squares    [24][10]*square
+	frame      [4]*rectangle
+	frameWidth int
 }
 
 func (b *Board) AddSquare(s *square) {
 	b.squares[s.position.y+HIDDEN_AREA][s.position.x] = s
 }
+
+// *******
+// DRAWING
+// ********
 
 func (b *Board) Draw(screen *ebiten.Image) {
 	b.DrawSquares(screen)
@@ -34,11 +39,20 @@ func (b *Board) DrawSquares(screen *ebiten.Image) {
 	for _, row := range b.squares {
 		for _, sq := range row {
 			if sq != nil {
-				sq.Draw(screen)
+				sq.Draw(screen, coords{0, b.frameWidth})
 			}
 		}
 	}
 }
+
+// DrawSquare draws a square on the board
+func (b *Board) DrawShape(screen *ebiten.Image, shp shape) {
+	shp.Draw(screen, coords{0, b.frameWidth})
+}
+
+// ***********
+// END DRAWING
+// ***********
 
 // isLineFull returns true if the line is full
 func (b *Board) isLineFull(y int) bool {
@@ -61,12 +75,14 @@ func (b *Board) shiftLinesDown(y int) {
 
 func makeBoard() *Board {
 	frame_color := color.RGBA{184, 184, 184, 0xff}
+	frameWidth := 2
 	return &Board{
+		frameWidth: frameWidth,
 		frame: [4]*rectangle{
-			makeRectangle(coords{482, FRAME_WIDTH}, frame_color, coords{0, 0}),
-			makeRectangle(coords{FRAME_WIDTH, 962}, frame_color, coords{482, 0}),
-			makeRectangle(coords{482, FRAME_WIDTH}, frame_color, coords{FRAME_WIDTH, 962}),
-			makeRectangle(coords{FRAME_WIDTH, 962}, frame_color, coords{0, FRAME_WIDTH}),
+			makeRectangle(coords{482, frameWidth}, frame_color, coords{0, 0}),
+			makeRectangle(coords{frameWidth, 962}, frame_color, coords{482, 0}),
+			makeRectangle(coords{482, frameWidth}, frame_color, coords{frameWidth, 962}),
+			makeRectangle(coords{frameWidth, 962}, frame_color, coords{0, frameWidth}),
 		},
 	}
 }

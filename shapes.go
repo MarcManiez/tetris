@@ -2,6 +2,7 @@ package main
 
 import (
 	"image/color"
+	"math/rand"
 )
 
 type coords struct {
@@ -126,3 +127,7 @@ func makeZ(position coords) shape {
 }
 
 var shapeFuncs = [7](func(coords) shape){makeI, makeJ, makeL, makeO, makeS, makeT, makeZ}
+
+func makeRandomShape(position coords) shape {
+	return shapeFuncs[rand.Intn(len(shapeFuncs))](position)
+}

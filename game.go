@@ -1,19 +1,15 @@
 package main
 
 import (
-	"math/rand"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/tinne26/etxt"
 )
-
-const FRAME_WIDTH = 2
 
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
-	shape shape
-	board *Board
+	currentShape shape
+	nextShape    shape
+	board        *Board
 	// Last update call for which a movement key was pressed
 	lastMove int
 	// Throttle value for player movement
@@ -25,19 +21,26 @@ type Game struct {
 	updates_since_movement int
 	musicPlayer            *audio.Player
 	paused                 bool
-	textRenderer           *etxt.Renderer
 }
+
+const INTERVAL = 60
 
 func initGame() *Game {
 	g := Game{
-		interval: 60,
+		interval: INTERVAL,
 		throttle: 10,
 		board:    makeBoard(),
 		// Un/comment for music on/off
 		// musicPlayer:  InitMusic(),
 	}
-	g.spawnShape()
+	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
+	g.spawnNextShape()
 	return &g
+}
+
+// spawnNextShape spawns the next shape
+func (g *Game) spawnNextShape() {
+	g.nextShape = makeRandomShape(coords{x: 0, y: 0})
 }
 
 func (g *Game) Update() error {
@@ -61,8 +64,7 @@ func (g *Game) Update() error {
 			g.updates_since_movement = 0
 			g.MoveDown()
 			if !g.CanMoveDown() {
-				g.board.addShape(g.shape)
-				g.spawnShape()
+				g.cycleShape()
 			}
 		}
 	}
@@ -73,9 +75,13 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return 800, 1200
 }
 
-func (g *Game) spawnShape() {
-	index := rand.Intn(len(shapeFuncs))
-	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
+// cycleShape transfers the current shape to the board, makes the next shape the
+// current shape, and spawns a new next shape
+func (g *Game) cycleShape() {
+	g.board.addShape(g.currentShape)
+	g.currentShape = g.nextShape
+	g.currentShape.translate(coords{x: 5, y: -1})
+	g.spawnNextShape()
 }
 
 // HandleInput handles input from the player during active game
@@ -106,39 +112,39 @@ func (g *Game) HandleInput() {
 // ****************
 
 func (g *Game) Rotate() {
-	originalPositions := g.shape.copyPositions()
+	originalPositions := g.currentShape.copyPositions()
 	// try rotating up to three times
 	for i := 0; i < 3; i++ {
-		g.shape.Rotate()
+		g.currentShape.Rotate()
 		if g.isShapePositionValid() {
 			return
 		}
 	}
 	// Restore initial position if no rotations were valid
-	g.shape.translate(originalPositions)
+	g.currentShape.setCoordinates(originalPositions)
 }
 
 func (g *Game) MoveLeft() {
 	if g.CanMoveLeft() {
-		g.shape.MoveLeft()
+		g.currentShape.MoveLeft()
 	}
 }
 
 func (g *Game) MoveRight() {
 	if g.CanMoveRight() {
-		g.shape.MoveRight()
+		g.currentShape.MoveRight()
 	}
 }
 
 func (g *Game) MoveDown() {
 	if g.CanMoveDown() {
-		g.shape.MoveDown()
+		g.currentShape.MoveDown()
 	}
 }
 
 // CanMoveDown returns true if the shape can move down
 func (g *Game) CanMoveDown() bool {
-	bottomSquares := g.shape.getBottomSquares()
+	bottomSquares := g.currentShape.getBottomSquares()
 	return none(bottomSquares, func(s *square) bool {
 		return !g.board.isCoordValid(coords{x: s.position.x, y: s.position.y + 1})
 	})
@@ -147,7 +153,7 @@ func (g *Game) CanMoveDown() bool {
 // CanMoveLeft returns true if the shape can move left
 func (g *Game) CanMoveLeft() bool {
 	// Select leftmost squares from a shape
-	leftSquares := g.shape.getLeftSquares()
+	leftSquares := g.currentShape.getLeftSquares()
 	return none(leftSquares, func(s *square) bool {
 		return !g.board.isCoordValid(coords{x: s.position.x - 1, y: s.position.y})
 	})
@@ -156,7 +162,7 @@ func (g *Game) CanMoveLeft() bool {
 // CanMoveRight returns true if the shape can move right
 func (g *Game) CanMoveRight() bool {
 	// Select rightmost squares from a shape
-	rightSquares := g.shape.getRightSquares()
+	rightSquares := g.currentShape.getRightSquares()
 	return none(rightSquares, func(s *square) bool {
 		return !g.board.isCoordValid(coords{x: s.position.x + 1, y: s.position.y})
 	})
@@ -165,7 +171,7 @@ func (g *Game) CanMoveRight() bool {
 // isShapePositionValid returns true if the shape is not colliding with any squares
 // or the edge of the board
 func (g *Game) isShapePositionValid() bool {
-	for _, square := range g.shape.squares() {
+	for _, square := range g.currentShape.squares() {
 		if !g.board.isCoordValid(square.position) {
 			return false
 		}
@@ -180,8 +186,10 @@ func (g *Game) isShapePositionValid() bool {
 // restart resets the game after a "game over"
 func (g *Game) restart() {
 	g.board = makeBoard()
+	g.interval = INTERVAL
 	g.updates_since_movement = 0
-	g.spawnShape()
+	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
+	g.spawnNextShape()
 }
 
 func (g *Game) pause() {
