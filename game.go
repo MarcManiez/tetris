@@ -115,36 +115,18 @@ func (g *Game) CanMoveDown() bool {
 func (g *Game) CanMoveLeft() bool {
 	// Select leftmost squares from a shape
 	leftSquares := g.shape.getLeftSquares()
-	if some(leftSquares, func(s *square) bool {
-		return s.position.x == 0
-	}) {
-		return false
-	}
-	// If any left square in the shape has a square directly to its left, return true
-	if some(leftSquares, func(s *square) bool {
-		return g.board.squares[s.position.y+HIDDEN_AREA][s.position.x-1] != nil
-	}) {
-		return false
-	}
-	return true
+	return none(leftSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x - 1, y: s.position.y})
+	})
 }
 
 // CanMoveRight returns true if the shape can move right
 func (g *Game) CanMoveRight() bool {
 	// Select rightmost squares from a shape
 	rightSquares := g.shape.getRightSquares()
-	if some(rightSquares, func(s *square) bool {
-		return s.position.x == (len(g.board.squares[0]) - 1)
-	}) {
-		return false
-	}
-	// If any right square in the shape has a square directly to its right, return true
-	if some(rightSquares, func(s *square) bool {
-		return g.board.squares[s.position.y+HIDDEN_AREA][s.position.x+1] != nil
-	}) {
-		return false
-	}
-	return true
+	return none(rightSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x + 1, y: s.position.y})
+	})
 }
 
 // HandleInput handles input from the player during active game
