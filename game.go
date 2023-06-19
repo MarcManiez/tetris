@@ -167,28 +167,21 @@ func (g *Game) Rotate() {
 }
 
 func (g *Game) MoveLeft() {
-	if !g.CanMoveLeft() {
-		return
-	}
-	for _, square := range g.shape.squares() {
-		square.position.x--
+	if g.CanMoveLeft() {
+		g.shape.MoveLeft()
 	}
 }
 
 func (g *Game) MoveRight() {
-	if !g.CanMoveRight() {
-		return
-	}
-	for _, square := range g.shape.squares() {
-		square.position.x++
+	if g.CanMoveRight() {
+		g.shape.MoveRight()
 	}
 }
 
 func (g *Game) MoveDown() {
-	if !g.CanMoveDown() {
-		return
+	if g.CanMoveDown() {
+		g.shape.MoveDown()
 	}
-	g.shape.MoveDown()
 }
 
 // isShapePositionValid returns true if the shape is not colliding with any squares
