@@ -2,7 +2,9 @@ package main
 
 import (
 	"embed"
+	"image/color"
 	"log"
+	"time"
 
 	"github.com/tinne26/etxt"
 )
@@ -32,4 +34,14 @@ func initTextRenderer() *etxt.Renderer {
 	txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
 	txtRenderer.SetSizePx(64)
 	return txtRenderer
+}
+
+// makeChangingColor returns a function that returns a color that changes over time
+func makeChangingColor() color.RGBA {
+	millis := time.Now().UnixMilli()
+	blue := (millis / 16) % 512
+	if blue >= 256 {
+		blue = 511 - blue
+	}
+	return color.RGBA{0, 255, uint8(blue), 255}
 }

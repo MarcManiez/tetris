@@ -1,9 +1,7 @@
 package main
 
 import (
-	"image/color"
 	"math/rand"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -77,13 +75,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.DrawFrame(screen)
 	if g.paused {
 		g.textRenderer.SetTarget(screen)
-		millis := time.Now().UnixMilli()
-		blue := (millis / 16) % 512
-		if blue >= 256 {
-			blue = 511 - blue
-		}
-		changingColor := color.RGBA{0, 255, uint8(blue), 255}
-		g.textRenderer.SetColor(changingColor)
+		g.textRenderer.SetColor(makeChangingColor())
 		g.textRenderer.Draw("PAUSED", 245, 475)
 	} else {
 		g.shape.Draw(screen)
