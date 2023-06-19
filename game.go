@@ -33,11 +33,11 @@ type Game struct {
 
 func initGame() *Game {
 	g := Game{
-		interval: 6,
+		interval: 60,
 		throttle: 10,
 		board:    makeBoard(),
-		// Uncomment for music
-		// musicPlayer: InitMusic(),
+		// Un/comment for music on/off
+		musicPlayer:  InitMusic(),
 		textRenderer: initTextRenderer(),
 	}
 	g.spawnShape()
@@ -47,7 +47,7 @@ func initGame() *Game {
 func (g *Game) Update() error {
 	if g.paused {
 		if includes(getJustPressedKeys(), ebiten.KeyP) {
-			g.paused = false
+			g.unpause()
 		} else {
 			return nil
 		}
@@ -171,7 +171,7 @@ func (g *Game) HandleInput() {
 	case ebiten.KeyArrowLeft:
 		g.MoveLeft()
 	case ebiten.KeyP:
-		g.paused = true
+		g.pause()
 	}
 	g.lastMove = g.updates
 }
@@ -238,4 +238,14 @@ func (g *Game) restart() {
 	g.board = makeBoard()
 	g.updates_since_movement = 0
 	g.spawnShape()
+}
+
+func (g *Game) pause() {
+	g.paused = true
+	g.musicPlayer.Pause()
+}
+
+func (g *Game) unpause() {
+	g.paused = false
+	g.musicPlayer.Play()
 }
