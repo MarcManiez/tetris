@@ -5,7 +5,6 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/tinne26/etxt"
 )
 
@@ -36,7 +35,6 @@ func initGame() *Game {
 		board:    makeBoard(),
 		// Un/comment for music on/off
 		// musicPlayer:  InitMusic(),
-		textRenderer: initTextRenderer(),
 	}
 	g.spawnShape()
 	return &g
@@ -69,22 +67,6 @@ func (g *Game) Update() error {
 		}
 	}
 	return nil
-}
-
-func (g *Game) Draw(screen *ebiten.Image) {
-	g.board.DrawFrame(screen)
-	if g.paused {
-		g.textRenderer.SetTarget(screen)
-		g.textRenderer.SetColor(makeChangingColor())
-		g.textRenderer.Draw("PAUSED", 245, 475)
-	} else {
-		g.shape.Draw(screen)
-		g.board.DrawSquares(screen)
-	}
-	if g.board.isGameOver() {
-		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
-		ebitenutil.DebugPrintAt(screen, "Press \"Enter\" to play again", 500, 20)
-	}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

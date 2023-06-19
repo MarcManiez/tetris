@@ -7,32 +7,42 @@ import (
 	"time"
 
 	"github.com/tinne26/etxt"
+	"github.com/tinne26/etxt/ecache"
 )
 
 //go:embed fonts/*
 var fonts embed.FS
 
-func initTextRenderer() *etxt.Renderer {
+var fontLib *etxt.FontLibrary
+
+var glyphsCache *ecache.DefaultCache
+
+var expectedFonts []string
+
+func initFonts() {
 	// load font library
-	fontLib := etxt.NewFontLibrary()
+	fontLib = etxt.NewFontLibrary()
 	_, _, err := fontLib.ParseEmbedDirFonts("fonts", fonts)
 	if err != nil {
 		log.Fatalf("Error while loading fonts: %s", err.Error())
 	}
 
-	expectedFonts := []string{"JetBrains Mono Bold"} // !!
+	expectedFonts = []string{"JetBrains Mono Bold"} // !!
 	for _, fontName := range expectedFonts {
 		if !fontLib.HasFont(fontName) {
 			log.Fatal("missing font: " + fontName)
 		}
 	}
 
+	glyphsCache = etxt.NewDefaultCache(10 * 1024 * 1024) // 10MB
+}
+
+func makeTextRenderer(pxSize int) *etxt.Renderer {
 	txtRenderer := etxt.NewStdRenderer()
-	glyphsCache := etxt.NewDefaultCache(10 * 1024 * 1024) // 10MB
 	txtRenderer.SetCacheHandler(glyphsCache.NewHandler())
 	txtRenderer.SetFont(fontLib.GetFont(expectedFonts[0]))
 	txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
-	txtRenderer.SetSizePx(64)
+	txtRenderer.SetSizePx(pxSize)
 	return txtRenderer
 }
 

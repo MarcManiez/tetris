@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	initFonts()
 	ebiten.SetFullscreen(true)
 	ebiten.SetWindowSize(640, 480)
 	ebiten.SetWindowTitle("Hello, World!")
