@@ -27,3 +27,4 @@ list.todo
 - [ ] high score initials
 - [ ] pause game
 - [ ] reuse rectangles instead of creating new ones all the time
+- [ ] refactor can move left and can move right methods to match can move down

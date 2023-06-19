@@ -1,12 +1,14 @@
 package main
 
 import (
+	"image/color"
 	"math/rand"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/tinne26/etxt"
 )
 
 const FRAME_WIDTH = 2
@@ -26,6 +28,7 @@ type Game struct {
 	updates_since_movement int
 	musicPlayer            *audio.Player
 	paused                 bool
+	textRenderer           *etxt.Renderer
 }
 
 func initGame() *Game {
@@ -35,6 +38,7 @@ func initGame() *Game {
 		board:    makeBoard(),
 		// Uncomment for music
 		// musicPlayer: InitMusic(),
+		textRenderer: initTextRenderer(),
 	}
 	g.spawnShape()
 	return &g
@@ -70,8 +74,21 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.shape.Draw(screen)
-	g.board.Draw(screen)
+	g.board.DrawFrame(screen)
+	if g.paused {
+		g.textRenderer.SetTarget(screen)
+		millis := time.Now().UnixMilli()
+		blue := (millis / 16) % 512
+		if blue >= 256 {
+			blue = 511 - blue
+		}
+		changingColor := color.RGBA{0, 255, uint8(blue), 255}
+		g.textRenderer.SetColor(changingColor)
+		g.textRenderer.Draw("PAUSED", 245, 475)
+	} else {
+		g.shape.Draw(screen)
+		g.board.DrawSquares(screen)
+	}
 	if g.board.isGameOver() {
 		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
 		ebitenutil.DebugPrintAt(screen, "Press \"Enter\" to play again", 500, 20)
@@ -221,16 +238,4 @@ func (g *Game) restart() {
 	g.board = makeBoard()
 	g.updates_since_movement = 0
 	g.spawnShape()
-}
-
-func getPressedKeys() []ebiten.Key {
-	keys := []ebiten.Key{}
-	keys = inpututil.AppendPressedKeys(keys)
-	return keys
-}
-
-func getJustPressedKeys() []ebiten.Key {
-	keys := []ebiten.Key{}
-	keys = inpututil.AppendJustPressedKeys(keys)
-	return keys
 }

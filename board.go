@@ -18,15 +18,25 @@ func (b *Board) AddSquare(s *square) {
 }
 
 func (b *Board) Draw(screen *ebiten.Image) {
+	b.DrawSquares(screen)
+	b.DrawFrame(screen)
+}
+
+// DrawFrame draws the frame around the board
+func (b *Board) DrawFrame(screen *ebiten.Image) {
+	for _, rect := range b.frame {
+		rect.DrawRectangle(screen)
+	}
+}
+
+// DrawSquares draws the squares on the board
+func (b *Board) DrawSquares(screen *ebiten.Image) {
 	for _, row := range b.squares {
 		for _, sq := range row {
 			if sq != nil {
 				sq.Draw(screen)
 			}
 		}
-	}
-	for _, rect := range b.frame {
-		rect.DrawRectangle(screen)
 	}
 }
 
