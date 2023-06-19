@@ -99,3 +99,12 @@ func (b *Board) addShape(s shape) {
 		b.AddSquare(sq)
 	}
 }
+
+// clearFullLines clears all full lines
+func (b *Board) clearFullLines() {
+	for y := len(b.squares) - 1; y >= 0; y-- {
+		for b.isLineFull(y) {
+			b.shiftLinesDown(y)
+		}
+	}
+}

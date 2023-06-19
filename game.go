@@ -60,7 +60,7 @@ func (g *Game) Update() error {
 		g.updates++
 		g.updates_since_movement++
 		g.HandleInput()
-		g.ClearFullLines()
+		g.board.clearFullLines()
 		if g.updates_since_movement >= g.interval {
 			g.updates_since_movement = 0
 			g.MoveDown()
@@ -104,6 +104,7 @@ func (g *Game) spawnShape() {
 	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
 }
 
+// CanMoveDown returns true if the shape can move down
 func (g *Game) CanMoveDown() bool {
 	bottomSquares := g.shape.getBottomSquares()
 	return none(bottomSquares, func(s *square) bool {
@@ -150,14 +151,6 @@ func (g *Game) HandleInput() {
 		g.pause()
 	}
 	g.lastMove = g.updates
-}
-
-func (g *Game) ClearFullLines() {
-	for y := len(g.board.squares) - 1; y >= 0; y-- {
-		for g.board.isLineFull(y) {
-			g.board.shiftLinesDown(y)
-		}
-	}
 }
 
 func (g *Game) Rotate() {
