@@ -204,10 +204,14 @@ func (g *Game) restart() {
 
 func (g *Game) pause() {
 	g.paused = true
-	g.musicPlayer.Pause()
+	if g.musicPlayer != nil {
+		g.musicPlayer.Pause()
+	}
 }
 
 func (g *Game) unpause() {
 	g.paused = false
-	g.musicPlayer.Play()
+	if g.musicPlayer != nil {
+		g.musicPlayer.Play()
+	}
 }
