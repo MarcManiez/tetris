@@ -1,15 +1,19 @@
 package main
 
 import (
+	"embed"
 	"log"
 
 	"github.com/tinne26/etxt"
 )
 
+//go:embed fonts/*
+var fonts embed.FS
+
 func initTextRenderer() *etxt.Renderer {
 	// load font library
 	fontLib := etxt.NewFontLibrary()
-	_, _, err := fontLib.ParseDirFonts("fonts") // !!
+	_, _, err := fontLib.ParseEmbedDirFonts("fonts", fonts)
 	if err != nil {
 		log.Fatalf("Error while loading fonts: %s", err.Error())
 	}
