@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -26,6 +25,7 @@ type Game struct {
 	interval               int
 	updates_since_movement int
 	musicPlayer            *audio.Player
+	paused                 bool
 }
 
 func initGame() *Game {
@@ -41,6 +41,13 @@ func initGame() *Game {
 }
 
 func (g *Game) Update() error {
+	if g.paused {
+		if includes(getJustPressedKeys(), ebiten.KeyP) {
+			g.paused = false
+		} else {
+			return nil
+		}
+	}
 	if g.board.isGameOver() {
 		if includes(getPressedKeys(), ebiten.KeyEnter) {
 			g.restart()
@@ -129,9 +136,9 @@ func (g *Game) TransferShapeToSquares() {
 	}
 }
 
+// HandleInput handles input from the player during active game
 func (g *Game) HandleInput() {
 	keys := getPressedKeys()
-	fmt.Println("handling input", keys)
 	// Do nothing if no keys are pressed or if more than one key is pressed,
 	// or if trying to move before the throttle period has passed
 	if len(keys) != 1 || g.updates-g.lastMove < g.throttle {
@@ -146,6 +153,8 @@ func (g *Game) HandleInput() {
 		g.MoveDown()
 	case ebiten.KeyArrowLeft:
 		g.MoveLeft()
+	case ebiten.KeyP:
+		g.paused = true
 	}
 	g.lastMove = g.updates
 }
@@ -217,5 +226,11 @@ func (g *Game) restart() {
 func getPressedKeys() []ebiten.Key {
 	keys := []ebiten.Key{}
 	keys = inpututil.AppendPressedKeys(keys)
+	return keys
+}
+
+func getJustPressedKeys() []ebiten.Key {
+	keys := []ebiten.Key{}
+	keys = inpututil.AppendJustPressedKeys(keys)
 	return keys
 }

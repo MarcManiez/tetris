@@ -25,3 +25,5 @@ list.todo
 - [ ] make music loop
 - [ ] levels
 - [ ] high score initials
+- [ ] pause game
+- [ ] reuse rectangles instead of creating new ones all the time
