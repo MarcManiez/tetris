@@ -6,16 +6,16 @@ import (
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
-	"github.com/hajimehoshi/ebiten/v2/audio/wav"
+	"github.com/hajimehoshi/ebiten/v2/audio/mp3"
 )
 
 func InitMusic() *audio.Player {
 	audioContext := audio.NewContext(44100)
-	v, err := os.ReadFile("litha.wav")
+	v, err := os.ReadFile("litha.mp3")
 	if err != nil {
 		log.Fatal(err)
 	}
-	wavPlayer, err := wav.DecodeWithSampleRate(44100, bytes.NewReader(v))
+	wavPlayer, err := mp3.DecodeWithSampleRate(44100, bytes.NewReader(v))
 	if err != nil {
 		log.Fatal(err)
 	}
