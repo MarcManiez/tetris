@@ -2,20 +2,19 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"log"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/hajimehoshi/ebiten/v2/audio/mp3"
 )
 
+//go:embed litha.mp3
+var music []byte
+
 func InitMusic() *audio.Player {
 	audioContext := audio.NewContext(44100)
-	v, err := os.ReadFile("litha.mp3")
-	if err != nil {
-		log.Fatal(err)
-	}
-	wavPlayer, err := mp3.DecodeWithSampleRate(44100, bytes.NewReader(v))
+	wavPlayer, err := mp3.DecodeWithSampleRate(44100, bytes.NewReader(music))
 	if err != nil {
 		log.Fatal(err)
 	}
