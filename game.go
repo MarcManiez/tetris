@@ -104,32 +104,6 @@ func (g *Game) spawnShape() {
 	g.shape = shapeFuncs[index](coords{x: 5, y: -1})
 }
 
-// CanMoveDown returns true if the shape can move down
-func (g *Game) CanMoveDown() bool {
-	bottomSquares := g.shape.getBottomSquares()
-	return none(bottomSquares, func(s *square) bool {
-		return !g.board.isCoordValid(coords{x: s.position.x, y: s.position.y + 1})
-	})
-}
-
-// CanMoveLeft returns true if the shape can move left
-func (g *Game) CanMoveLeft() bool {
-	// Select leftmost squares from a shape
-	leftSquares := g.shape.getLeftSquares()
-	return none(leftSquares, func(s *square) bool {
-		return !g.board.isCoordValid(coords{x: s.position.x - 1, y: s.position.y})
-	})
-}
-
-// CanMoveRight returns true if the shape can move right
-func (g *Game) CanMoveRight() bool {
-	// Select rightmost squares from a shape
-	rightSquares := g.shape.getRightSquares()
-	return none(rightSquares, func(s *square) bool {
-		return !g.board.isCoordValid(coords{x: s.position.x + 1, y: s.position.y})
-	})
-}
-
 // HandleInput handles input from the player during active game
 func (g *Game) HandleInput() {
 	keys := getPressedKeys()
@@ -152,6 +126,10 @@ func (g *Game) HandleInput() {
 	}
 	g.lastMove = g.updates
 }
+
+// ****************
+// MOVEMENT METHODS
+// ****************
 
 func (g *Game) Rotate() {
 	originalPositions := g.shape.copyPositions()
@@ -184,6 +162,32 @@ func (g *Game) MoveDown() {
 	}
 }
 
+// CanMoveDown returns true if the shape can move down
+func (g *Game) CanMoveDown() bool {
+	bottomSquares := g.shape.getBottomSquares()
+	return none(bottomSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x, y: s.position.y + 1})
+	})
+}
+
+// CanMoveLeft returns true if the shape can move left
+func (g *Game) CanMoveLeft() bool {
+	// Select leftmost squares from a shape
+	leftSquares := g.shape.getLeftSquares()
+	return none(leftSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x - 1, y: s.position.y})
+	})
+}
+
+// CanMoveRight returns true if the shape can move right
+func (g *Game) CanMoveRight() bool {
+	// Select rightmost squares from a shape
+	rightSquares := g.shape.getRightSquares()
+	return none(rightSquares, func(s *square) bool {
+		return !g.board.isCoordValid(coords{x: s.position.x + 1, y: s.position.y})
+	})
+}
+
 // isShapePositionValid returns true if the shape is not colliding with any squares
 // or the edge of the board
 func (g *Game) isShapePositionValid() bool {
@@ -194,6 +198,10 @@ func (g *Game) isShapePositionValid() bool {
 	}
 	return true
 }
+
+// ******************
+// GAME STATE METHODS
+// ******************
 
 // restart resets the game after a "game over"
 func (g *Game) restart() {
