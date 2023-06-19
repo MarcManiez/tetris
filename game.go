@@ -37,7 +37,7 @@ func initGame() *Game {
 		throttle: 10,
 		board:    makeBoard(),
 		// Un/comment for music on/off
-		musicPlayer:  InitMusic(),
+		// musicPlayer:  InitMusic(),
 		textRenderer: initTextRenderer(),
 	}
 	g.spawnShape()
@@ -65,7 +65,7 @@ func (g *Game) Update() error {
 			g.updates_since_movement = 0
 			g.MoveDown()
 			if !g.CanMoveDown() {
-				g.TransferShapeToSquares()
+				g.board.addShape(g.shape)
 				g.spawnShape()
 			}
 		}
@@ -145,12 +145,6 @@ func (g *Game) CanMoveRight() bool {
 		return false
 	}
 	return true
-}
-
-func (g *Game) TransferShapeToSquares() {
-	for _, sqr := range g.shape.squares() {
-		g.board.AddSquare(sqr)
-	}
 }
 
 // HandleInput handles input from the player during active game

@@ -92,3 +92,10 @@ func (b *Board) isGameOver() bool {
 		return sq != nil
 	})
 }
+
+// addShape adds a shape to the board
+func (b *Board) addShape(s shape) {
+	for _, sq := range s.squares() {
+		b.AddSquare(sq)
+	}
+}
