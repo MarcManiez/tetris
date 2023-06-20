@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,6 +11,7 @@ import (
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.DrawFrame(screen)
 	g.DrawNextShape(screen)
+	g.DrawLevel(screen)
 	if g.paused {
 		renderer := makeTextRenderer(64)
 		renderer.SetTarget(screen)
@@ -17,7 +19,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		renderer.Draw("PAUSED", 245, 475)
 	} else {
 		g.board.DrawShape(screen, g.currentShape)
-		g.board.DrawSquares(screen, g.updates, g.interval)
+		g.board.DrawSquares(screen, g.updates, g.interval())
 	}
 	if g.board.isGameOver() {
 		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
@@ -32,4 +34,12 @@ func (g *Game) DrawNextShape(screen *ebiten.Image) {
 	renderer.SetColor(color.White)
 	renderer.Draw("Next Shape", 600, 475)
 	g.nextShape.Draw(screen, coords{580, 650}, 255)
+}
+
+func (g *Game) DrawLevel(screen *ebiten.Image) {
+	renderer := makeTextRenderer(24)
+	renderer.SetTarget(screen)
+	renderer.SetColor(color.White)
+	level := fmt.Sprintf("Level %d", g.level())
+	renderer.Draw(level, 579, 400)
 }

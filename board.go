@@ -143,10 +143,13 @@ func (b *Board) addShape(s shape) {
 }
 
 // clearFullLines clears all full lines
-func (b *Board) clearFullLines() {
+func (b *Board) clearFullLines() int {
+	var linesCleared int
 	for y := len(b.squares) - 1; y >= 0; y-- {
 		for b.isLineFull(y) {
+			linesCleared++
 			b.shiftLinesDown(y)
 		}
 	}
+	return linesCleared
 }

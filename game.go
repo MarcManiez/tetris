@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"math"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
@@ -10,24 +13,23 @@ type Game struct {
 	currentShape shape
 	nextShape    shape
 	board        *Board
+	linesCleared int
 	// Last update call for which a movement key was pressed
 	lastMove int
 	// Throttle value for player movement
 	throttle int
 	// Number of times the update function has run
-	updates int
-	// Number of updates between shape movements
-	interval               int
+	updates                int
 	updates_since_movement int
 	musicPlayer            *audio.Player
 	paused                 bool
 }
 
 const INTERVAL = 60
+const INITIAL_LEVEL = 1
 
 func initGame() *Game {
 	g := Game{
-		interval: INTERVAL,
 		throttle: 10,
 		board:    makeBoard(),
 		// Un/comment for music on/off
@@ -59,10 +61,10 @@ func (g *Game) Update() error {
 		g.updates++
 		g.updates_since_movement++
 		g.HandleInput()
-		if g.updates_since_movement == g.interval-1 {
-			g.board.clearFullLines()
+		if g.updates_since_movement == g.interval() {
+			g.linesCleared += g.board.clearFullLines()
 		}
-		if g.updates_since_movement >= g.interval {
+		if g.updates_since_movement >= g.interval() {
 			g.updates_since_movement = 0
 			g.MoveDown()
 			if !g.CanMoveDown() {
@@ -188,7 +190,7 @@ func (g *Game) isShapePositionValid() bool {
 // restart resets the game after a "game over"
 func (g *Game) restart() {
 	g.board = makeBoard()
-	g.interval = INTERVAL
+	g.linesCleared = 0
 	g.updates_since_movement = 0
 	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
 	g.spawnNextShape()
@@ -205,5 +207,21 @@ func (g *Game) unpause() {
 	g.paused = false
 	if g.musicPlayer != nil {
 		g.musicPlayer.Play()
+	}
+}
+
+func (g *Game) level() int {
+	return g.linesCleared/10 + 1
+}
+
+// interval represents the number of updates between shape movements
+func (g *Game) interval() int {
+	level := g.level()
+	interval := 0.8 - (float32(level-1) * float32(0.007))
+	fmt.Println(interval)
+	if level == 1 {
+		return int(interval * 60)
+	} else {
+		return int(math.Pow(float64(interval), float64(level-2)) * float64(60))
 	}
 }
