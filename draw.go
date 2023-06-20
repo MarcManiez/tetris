@@ -17,7 +17,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		renderer.Draw("PAUSED", 245, 475)
 	} else {
 		g.board.DrawShape(screen, g.currentShape)
-		g.board.DrawSquares(screen)
+		g.board.DrawSquares(screen, g.updates, g.interval)
 	}
 	if g.board.isGameOver() {
 		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
@@ -31,5 +31,5 @@ func (g *Game) DrawNextShape(screen *ebiten.Image) {
 	renderer.SetTarget(screen)
 	renderer.SetColor(color.White)
 	renderer.Draw("Next Shape", 600, 475)
-	g.nextShape.Draw(screen, coords{580, 650})
+	g.nextShape.Draw(screen, coords{580, 650}, 255)
 }

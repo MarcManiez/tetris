@@ -16,19 +16,21 @@ const SQUARE_HEIGHT = 48
 const SQUARE_BORDER_WIDTH = 2
 
 // Draw draws a square on the screen at the provided origin coordinates
-func (s *square) Draw(screen *ebiten.Image, origin coords) {
+func (s *square) Draw(screen *ebiten.Image, origin coords, opacity uint8) {
+	r, g, b, _ := s.color.RGBA()
+	insideColor := color.RGBA{uint8(r), uint8(g), uint8(b), opacity}
 	insideWidth := SQUARE_HEIGHT - SQUARE_BORDER_WIDTH*2
-	arr := []*rectangle{
+	sqr := []*rectangle{
 		// Top
 		makeRectangle(
 			coords{(SQUARE_HEIGHT - SQUARE_BORDER_WIDTH), SQUARE_BORDER_WIDTH},
-			color.RGBA{184, 184, 184, 0xff},
+			color.RGBA{184, 184, 184, opacity},
 			coords{s.position.x*SQUARE_HEIGHT + origin.x, s.position.y*SQUARE_HEIGHT + origin.y},
 		),
 		// Bottom
 		makeRectangle(
 			coords{(SQUARE_HEIGHT - SQUARE_BORDER_WIDTH), SQUARE_BORDER_WIDTH},
-			color.RGBA{136, 136, 136, 0xff},
+			color.RGBA{136, 136, 136, opacity},
 			coords{
 				s.position.x*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + origin.x,
 				s.position.y*SQUARE_HEIGHT + (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH) + origin.y,
@@ -37,23 +39,23 @@ func (s *square) Draw(screen *ebiten.Image, origin coords) {
 		// Right
 		makeRectangle(
 			coords{SQUARE_BORDER_WIDTH, (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH)},
-			color.RGBA{200, 200, 200, 0xff},
+			color.RGBA{200, 200, 200, opacity},
 			coords{s.position.x*SQUARE_HEIGHT + (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH) + origin.x, s.position.y*SQUARE_HEIGHT + origin.y},
 		),
 		// Left
 		makeRectangle(
 			coords{SQUARE_BORDER_WIDTH, (SQUARE_HEIGHT - SQUARE_BORDER_WIDTH)},
-			color.RGBA{150, 150, 150, 0xff},
+			color.RGBA{150, 150, 150, opacity},
 			coords{s.position.x*SQUARE_HEIGHT + origin.x, s.position.y*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + origin.y},
 		),
 		// Middle
 		makeRectangle(
 			coords{insideWidth, insideWidth},
-			s.color,
+			insideColor,
 			coords{s.position.x*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + origin.x, s.position.y*SQUARE_HEIGHT + SQUARE_BORDER_WIDTH + origin.y},
 		),
 	}
-	for _, rect := range arr {
+	for _, rect := range sqr {
 		rect.DrawRectangle(screen)
 	}
 }

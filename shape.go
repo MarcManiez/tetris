@@ -11,7 +11,7 @@ type shapeImpl []*square
 
 type shape interface {
 	Rotate()
-	Draw(screen *ebiten.Image, origin coords)
+	Draw(screen *ebiten.Image, origin coords, opacity uint8)
 	MoveDown()
 	MoveLeft()
 	MoveRight()
@@ -25,9 +25,9 @@ type shape interface {
 	print()
 }
 
-func (s *shapeImpl) Draw(screen *ebiten.Image, origin coords) {
+func (s *shapeImpl) Draw(screen *ebiten.Image, origin coords, opacity uint8) {
 	for _, sqr := range *s {
-		sqr.Draw(screen, origin)
+		sqr.Draw(screen, origin, opacity)
 	}
 }
 

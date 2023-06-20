@@ -59,7 +59,9 @@ func (g *Game) Update() error {
 		g.updates++
 		g.updates_since_movement++
 		g.HandleInput()
-		g.board.clearFullLines()
+		if g.updates_since_movement == g.interval-1 {
+			g.board.clearFullLines()
+		}
 		if g.updates_since_movement >= g.interval {
 			g.updates_since_movement = 0
 			g.MoveDown()

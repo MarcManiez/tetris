@@ -20,12 +20,7 @@ func (b *Board) AddSquare(s *square) {
 
 // *******
 // DRAWING
-// ********
-
-func (b *Board) Draw(screen *ebiten.Image) {
-	b.DrawSquares(screen)
-	b.DrawFrame(screen)
-}
+// *******
 
 // DrawFrame draws the frame around the board
 func (b *Board) DrawFrame(screen *ebiten.Image) {
@@ -35,11 +30,16 @@ func (b *Board) DrawFrame(screen *ebiten.Image) {
 }
 
 // DrawSquares draws the squares on the board
-func (b *Board) DrawSquares(screen *ebiten.Image) {
-	for _, row := range b.squares {
+func (b *Board) DrawSquares(screen *ebiten.Image, updates int, interval int) {
+	for rowIndex, row := range b.squares {
+		var opacity uint8 = 255
+		// If the line is full, flash the line by making it transparent 4 times per interval
+		if b.isLineFull(rowIndex) && (uint8(updates/(interval/4))%2) == 0 {
+			opacity = 128
+		}
 		for _, sq := range row {
 			if sq != nil {
-				sq.Draw(screen, coords{0, b.frameWidth})
+				sq.Draw(screen, coords{b.frameWidth, b.frameWidth}, opacity)
 			}
 		}
 	}
@@ -47,7 +47,7 @@ func (b *Board) DrawSquares(screen *ebiten.Image) {
 
 // DrawSquare draws a square on the board
 func (b *Board) DrawShape(screen *ebiten.Image, shp shape) {
-	shp.Draw(screen, coords{0, b.frameWidth})
+	shp.Draw(screen, coords{b.frameWidth, b.frameWidth}, 244)
 }
 
 // ***********
@@ -84,6 +84,32 @@ func makeBoard() *Board {
 			makeRectangle(coords{482, frameWidth}, frame_color, coords{frameWidth, 962}),
 			makeRectangle(coords{frameWidth, 962}, frame_color, coords{0, frameWidth}),
 		},
+		// squares: [24][10]*square{
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{},
+		// 	[10]*square{&square{position: coords{x: 0, y: 19}, color: frame_color}, &square{position: coords{x: 1, y: 19}, color: frame_color}, &square{position: coords{x: 2, y: 19}, color: frame_color}, &square{position: coords{x: 3, y: 19}, color: frame_color}, &square{position: coords{x: 4, y: 19}, color: frame_color}, &square{position: coords{x: 5, y: 19}, color: frame_color}, &square{position: coords{x: 6, y: 19}, color: frame_color}, &square{position: coords{x: 7, y: 19}, color: frame_color}, &square{position: coords{x: 8, y: 19}, color: frame_color}, &square{position: coords{x: 9, y: 19}, color: frame_color}},
+		// },
 	}
 }
 
