@@ -8,12 +8,20 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
+var SCORE_MATRIX = map[int]int{
+	1: 1,
+	2: 3,
+	3: 5,
+	4: 8,
+}
+
 // Game implements ebiten.Game interface and is composed of one active shape that the player controls and needs to place, and a collection of squares that have already been placed
 type Game struct {
 	currentShape shape
 	nextShape    shape
 	board        *Board
 	linesCleared int
+	score        int
 	// Last update call for which a movement key was pressed
 	lastMove int
 	// Throttle value for player movement
@@ -62,7 +70,9 @@ func (g *Game) Update() error {
 		g.updates_since_movement++
 		g.HandleInput()
 		if g.updates_since_movement == g.interval() {
-			g.linesCleared += g.board.clearFullLines()
+			linesCleared := g.board.clearFullLines()
+			g.linesCleared += linesCleared
+			g.score += SCORE_MATRIX[linesCleared] * g.level()
 		}
 		if g.updates_since_movement >= g.interval() {
 			g.updates_since_movement = 0
@@ -192,6 +202,7 @@ func (g *Game) restart() {
 	g.board = makeBoard()
 	g.linesCleared = 0
 	g.updates_since_movement = 0
+	g.score = 0
 	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
 	g.spawnNextShape()
 }

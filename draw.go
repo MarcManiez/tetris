@@ -11,6 +11,7 @@ import (
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.DrawFrame(screen)
 	g.DrawNextShape(screen)
+	g.DrawScore(screen)
 	g.DrawLevel(screen)
 	if g.paused {
 		renderer := makeTextRenderer(64)
@@ -42,4 +43,12 @@ func (g *Game) DrawLevel(screen *ebiten.Image) {
 	renderer.SetColor(color.White)
 	level := fmt.Sprintf("Level %d", g.level())
 	renderer.Draw(level, 579, 400)
+}
+
+func (g *Game) DrawScore(screen *ebiten.Image) {
+	renderer := makeTextRenderer(24)
+	renderer.SetTarget(screen)
+	renderer.SetColor(color.White)
+	score := fmt.Sprintf("Score %d", g.score)
+	renderer.Draw(score, 579, 425)
 }
