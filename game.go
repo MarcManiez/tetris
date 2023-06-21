@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -229,7 +228,6 @@ func (g *Game) level() int {
 func (g *Game) interval() int {
 	level := g.level()
 	interval := 0.8 - (float32(level-1) * float32(0.007))
-	fmt.Println(interval)
 	if level == 1 {
 		return int(interval * 60)
 	} else {
