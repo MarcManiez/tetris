@@ -25,6 +25,8 @@ type Game struct {
 	lastMove int
 	// Throttle value for player movement
 	throttle int
+	// Throttle value for player movement when down is pressed
+	downThrottle int
 	// Number of times the update function has run
 	updates                int
 	updates_since_movement int
@@ -37,8 +39,9 @@ const INITIAL_LEVEL = 1
 
 func initGame() *Game {
 	g := Game{
-		throttle: 10,
-		board:    makeBoard(),
+		throttle:     7,
+		downThrottle: 3,
+		board:        makeBoard(),
 		// Un/comment for music on/off
 		// musicPlayer:  InitMusic(),
 	}
@@ -102,7 +105,15 @@ func (g *Game) HandleInput() {
 	keys := getPressedKeys()
 	// Do nothing if no keys are pressed or if more than one key is pressed,
 	// or if trying to move before the throttle period has passed
-	if len(keys) != 1 || g.updates-g.lastMove < g.throttle {
+	if len(keys) != 1 {
+		return
+	}
+	if keys[0] == ebiten.KeyArrowDown && g.updates-g.lastMove >= g.downThrottle {
+		g.MoveDown()
+		g.lastMove = g.updates
+		return
+	}
+	if g.updates-g.lastMove < g.throttle {
 		return
 	}
 	switch key := keys[0]; key {
@@ -110,8 +121,6 @@ func (g *Game) HandleInput() {
 		g.Rotate()
 	case ebiten.KeyArrowRight:
 		g.MoveRight()
-	case ebiten.KeyArrowDown:
-		g.MoveDown()
 	case ebiten.KeyArrowLeft:
 		g.MoveLeft()
 	case ebiten.KeyP:
