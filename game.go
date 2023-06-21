@@ -45,7 +45,7 @@ func initGame() *Game {
 		// Un/comment for music on/off
 		// musicPlayer:  InitMusic(),
 	}
-	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
+	g.currentShape = makeRandomShape(coords{x: 5, y: 0})
 	g.spawnNextShape()
 	return &g
 }
@@ -96,7 +96,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 func (g *Game) cycleShape() {
 	g.board.addShape(g.currentShape)
 	g.currentShape = g.nextShape
-	g.currentShape.translate(coords{x: 5, y: -1})
+	g.currentShape.translate(coords{x: 5, y: 0})
 	g.spawnNextShape()
 }
 
@@ -211,7 +211,7 @@ func (g *Game) restart() {
 	g.linesCleared = 0
 	g.updates_since_movement = 0
 	g.score = 0
-	g.currentShape = makeRandomShape(coords{x: 5, y: -1})
+	g.currentShape = makeRandomShape(coords{x: 5, y: 0})
 	g.spawnNextShape()
 }
 

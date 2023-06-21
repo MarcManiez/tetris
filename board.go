@@ -6,10 +6,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const HIDDEN_AREA = 4
+const HIDDEN_AREA = 3
 
 type Board struct {
-	squares    [24][10]*square
+	squares    [23][10]*square
 	frame      [4]*rectangle
 	frameWidth int
 }
@@ -84,32 +84,6 @@ func makeBoard() *Board {
 			makeRectangle(coords{482, frameWidth}, frame_color, coords{frameWidth, 962}),
 			makeRectangle(coords{frameWidth, 962}, frame_color, coords{0, frameWidth}),
 		},
-		// squares: [24][10]*square{
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{},
-		// 	[10]*square{&square{position: coords{x: 0, y: 19}, color: frame_color}, &square{position: coords{x: 1, y: 19}, color: frame_color}, &square{position: coords{x: 2, y: 19}, color: frame_color}, &square{position: coords{x: 3, y: 19}, color: frame_color}, &square{position: coords{x: 4, y: 19}, color: frame_color}, &square{position: coords{x: 5, y: 19}, color: frame_color}, &square{position: coords{x: 6, y: 19}, color: frame_color}, &square{position: coords{x: 7, y: 19}, color: frame_color}, &square{position: coords{x: 8, y: 19}, color: frame_color}, &square{position: coords{x: 9, y: 19}, color: frame_color}},
-		// },
 	}
 }
 
@@ -120,7 +94,7 @@ func (b *Board) isCoordOccupied(c coords) bool {
 
 // isCoordOutOfBounds returns true if the coordinate is out of bounds
 func (b *Board) isCoordOutOfBounds(c coords) bool {
-	return c.x < 0 || c.x >= 10 || c.y+HIDDEN_AREA >= 24 || c.y+HIDDEN_AREA < 0
+	return c.x < 0 || c.x >= len(b.squares[0]) || c.y+HIDDEN_AREA >= len(b.squares) || c.y+HIDDEN_AREA < 0
 }
 
 // isCoordValid returns true if the coordinate is valid

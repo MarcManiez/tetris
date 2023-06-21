@@ -27,9 +27,9 @@ list.todo
 - [x] pause game
 - [x] add score
 - [x] text should start at a certain y coordinate, instead of readjusting via the middle
-- [ ] increase repeat rate
+- [x] increase repeat rate
+- [x] load shape one square lower (and reduce size of board by 1)
 - [ ] make music loop
 - [ ] high score initials
 - [ ] reuse rectangles instead of creating new ones all the time
 - [ ] add key legend
-- [ ] load shape one square lower (and reduce size of board by 1)
