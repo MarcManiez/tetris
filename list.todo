@@ -29,6 +29,7 @@ list.todo
 - [x] text should start at a certain y coordinate, instead of readjusting via the middle
 - [x] increase repeat rate
 - [x] load shape one square lower (and reduce size of board by 1)
+- [ ] make game over text regular text, instead of jank logs
 - [ ] make music loop
 - [ ] high score initials
 - [ ] reuse rectangles instead of creating new ones all the time
