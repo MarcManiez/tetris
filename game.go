@@ -77,11 +77,11 @@ func (g *Game) Update() error {
 			g.score += SCORE_MATRIX[linesCleared] * g.level()
 		}
 		if g.updates_since_movement >= g.interval() {
-			g.updates_since_movement = 0
-			g.MoveDown()
 			if !g.CanMoveDown() {
 				g.cycleShape()
 			}
+			g.updates_since_movement = 0
+			g.MoveDown()
 		}
 	}
 	return nil
