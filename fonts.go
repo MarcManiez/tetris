@@ -37,12 +37,20 @@ func initFonts() {
 	glyphsCache = etxt.NewDefaultCache(10 * 1024 * 1024) // 10MB
 }
 
-func makeTextRenderer(pxSize int) *etxt.Renderer {
+type textOptions struct {
+	fontSize     int
+	textCentered bool
+}
+
+func makeTextRenderer(opts textOptions) *etxt.Renderer {
 	txtRenderer := etxt.NewStdRenderer()
 	txtRenderer.SetCacheHandler(glyphsCache.NewHandler())
 	txtRenderer.SetFont(fontLib.GetFont(expectedFonts[0]))
+	if opts.textCentered {
+		txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
+	}
 	txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
-	txtRenderer.SetSizePx(pxSize)
+	txtRenderer.SetSizePx(opts.fontSize)
 	return txtRenderer
 }
 
