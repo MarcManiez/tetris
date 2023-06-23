@@ -5,7 +5,6 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -23,8 +22,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.board.DrawSquares(screen, g.updates, g.interval())
 	}
 	if g.board.isGameOver() {
-		ebitenutil.DebugPrintAt(screen, "Game over!", 500, 0)
-		ebitenutil.DebugPrintAt(screen, "Press \"Enter\" to play again", 500, 20)
+		g.DrawGameOver(screen)
 	}
 }
 
@@ -33,8 +31,8 @@ func (g *Game) DrawNextShape(screen *ebiten.Image) {
 	renderer := makeTextRenderer(textOptions{fontSize: 24})
 	renderer.SetTarget(screen)
 	renderer.SetColor(color.White)
-	renderer.Draw("Next Shape", 600, 475)
-	g.nextShape.Draw(screen, coords{580, 650}, 255)
+	renderer.Draw("Next Shape:", 500, 475)
+	g.nextShape.Draw(screen, coords{550, 650}, 255)
 }
 
 func (g *Game) DrawLevel(screen *ebiten.Image) {
@@ -42,7 +40,7 @@ func (g *Game) DrawLevel(screen *ebiten.Image) {
 	renderer.SetTarget(screen)
 	renderer.SetColor(color.White)
 	level := fmt.Sprintf("Level %d", g.level())
-	renderer.Draw(level, 579, 400)
+	renderer.Draw(level, 500, 400)
 }
 
 func (g *Game) DrawScore(screen *ebiten.Image) {
@@ -50,5 +48,16 @@ func (g *Game) DrawScore(screen *ebiten.Image) {
 	renderer.SetTarget(screen)
 	renderer.SetColor(color.White)
 	score := fmt.Sprintf("Score %d", g.score)
-	renderer.Draw(score, 579, 425)
+	renderer.Draw(score, 500, 425)
+}
+
+func (g *Game) DrawGameOver(screen *ebiten.Image) {
+	renderer := makeTextRenderer(textOptions{fontSize: 24})
+	renderer.SetTarget(screen)
+	renderer.SetColor(color.White)
+	renderer.Draw("Game over!", 500, 25)
+	renderer = makeTextRenderer(textOptions{fontSize: 24})
+	renderer.SetTarget(screen)
+	renderer.SetColor(color.White)
+	renderer.Draw("Press \"Enter\" to play again", 500, 50)
 }

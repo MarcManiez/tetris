@@ -49,7 +49,6 @@ func makeTextRenderer(opts textOptions) *etxt.Renderer {
 	if opts.textCentered {
 		txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
 	}
-	txtRenderer.SetAlign(etxt.YCenter, etxt.XCenter)
 	txtRenderer.SetSizePx(opts.fontSize)
 	return txtRenderer
 }
